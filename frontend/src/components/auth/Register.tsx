@@ -1,10 +1,6 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
-// import { Link, Navigate, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { registerUser } from "../../api/authAPI";
-// import { useSelector } from "react-redux";
 
 interface FormValues {
   name: string;
