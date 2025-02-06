@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
+import { registerUser } from "../../api/authAPI";
 
 interface FormValues {
   name: string;
@@ -153,16 +154,31 @@ const Register: React.FC = () => {
     handleOnchange(e);
   };
 
-    const handleSubmit =(e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit =async(e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
     //   const keys = Object.keys(errors) as Array<keyof Errors>;
       for (let key in errors) {
         if (errors[key].error) {
             console.log(errors[key].error)
           console.log("empty data");
-        //   toast.error("Enter valid credentials");
           return;
         }
+      }
+      const newUser = {
+        name: formValues.name,
+        email: formValues.email,
+        password: formValues.password,
+      };
+      try {
+        const response= await registerUser(newUser)
+        if(response.error){
+          console.log(response)
+          return alert(response.error)
+        }
+        alert("User registered")
+      } catch (error) {
+        console.log(error)
+        alert(error);
       }
       console.log(formValues);
     };

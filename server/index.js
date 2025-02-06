@@ -15,7 +15,6 @@ app.use("/auth", authRoute)
 app.get("/", (req,res)=>{
     res.send("Server is listening")
 })
-console.log(process.env.MONGO_URI)
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))

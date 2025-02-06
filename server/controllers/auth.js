@@ -6,6 +6,7 @@ exports.register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
+    console.log(req.body)
     return res.status(400).json({
       error: "Please provide name, email and password!",
     });
@@ -29,7 +30,7 @@ exports.register = async (req, res) => {
     await newUser.save();
     const { password, ...others } = newUser._doc;
 
-    return res.status(200).json("User registered successfully!");
+    return res.status(200).json({message:"User registered successfully!"});
   } catch (error) {
     return res.status(500).json({
       error: error.message,
