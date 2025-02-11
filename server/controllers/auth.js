@@ -6,7 +6,6 @@ exports.register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    console.log(req.body)
     return res.status(400).json({
       error: "Please provide name, email and password!",
     });

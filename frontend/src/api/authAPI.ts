@@ -1,5 +1,5 @@
 interface UserData {
-    username: string;
+    name?: string;
     email: string;
     password: string;
   }
@@ -21,4 +21,17 @@ export const registerUser = async (userData:UserData):Promise<APIResponse> => {
     .then((response) => response.json())
     .then((data) => data)
     .catch((error) => console.error("Error:", error));
+};
+export const loginUser = async (userData:UserData):Promise<APIResponse> => {
+  console.log(userData)
+return await fetch(`${url}/auth/login`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(userData),
+})
+  .then((response) => response.json())
+  .then((data) => data)
+  .catch((error) => console.error("Error:", error));
 };

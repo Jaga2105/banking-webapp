@@ -2,6 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import { registerUser } from "../../api/authAPI";
+import { Link } from "react-router-dom";
 
 interface FormValues {
   name: string;
@@ -159,8 +160,6 @@ const Register: React.FC = () => {
     //   const keys = Object.keys(errors) as Array<keyof Errors>;
       for (let key in errors) {
         if (errors[key].error) {
-            console.log(errors[key].error)
-          console.log("empty data");
           return;
         }
       }
@@ -324,7 +323,7 @@ const Register: React.FC = () => {
             </div>
             <div className={`flex justify-center w-full`}>
               <h4>Existing User?</h4>
-              <button className="text-blue-600 pl-2">Sign In</button>
+              <Link to={"/login"} className="text-blue-600 pl-2">Sign In</Link>
             </div>
           </form>
         </div>
