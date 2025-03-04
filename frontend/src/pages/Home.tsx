@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Home:React.FC = () => {
+const Home = () => {
   return (
-    <div className=' h-screen text-3xl flex justify-center items-center'>Welcome to home Page</div>
+    <div className='h-100 w-full flex justify-center items-center text-3xl'>This is Home Page</div>
   )
 }
 
-export default Home;
+export default Home

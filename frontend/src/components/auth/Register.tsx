@@ -1,8 +1,8 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import { registerUser } from "../../api/authAPI";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface FormValues {
   name: string;
@@ -49,6 +49,10 @@ const Register: React.FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues);
   const [errors, setErrors] = useState<Errors>(initialErrors);
+
+  const navigate = useNavigate();
+
+  const user = localStorage.getItem("user");
 
   const validateName = (name: string, value: string) => {
     let errorMsg = "";
@@ -174,13 +178,20 @@ const Register: React.FC = () => {
           console.log(response)
           return alert(response.error)
         }
-        alert("User registered")
+        navigate("/login")
       } catch (error) {
         console.log(error)
         alert(error);
       }
       console.log(formValues);
     };
+
+    useEffect(() => {
+      if(user){
+        navigate("/")
+      }
+    }, [user])
+    
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-ceneter py-12 sm:px-6 lg:px-8">

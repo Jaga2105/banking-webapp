@@ -23,7 +23,6 @@ export const registerUser = async (userData:UserData):Promise<APIResponse> => {
     .catch((error) => console.error("Error:", error));
 };
 export const loginUser = async (userData:UserData):Promise<APIResponse> => {
-  console.log(userData)
 return await fetch(`${url}/auth/login`, {
   method: "POST",
   headers: {
@@ -35,3 +34,19 @@ return await fetch(`${url}/auth/login`, {
   .then((data) => data)
   .catch((error) => console.error("Error:", error));
 };
+
+export const sendForgotPasswordEmail = async (email:string):Promise<APIResponse>=>{
+  console.log(email)
+  return await fetch(`${url}/auth/forgot-password`,{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({email}),
+  })
+  .then((response) => {
+    console.log(response)
+    return response.json()})
+  .then((data) => data)
+  .catch((error) => console.error("Error:", error));
+}

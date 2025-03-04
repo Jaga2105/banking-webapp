@@ -7,16 +7,20 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     maxlength: 32,
   },
-  email:{
+  email: {
     type: String,
-      required: true,
-      trim: true,
-      maxlength: 32,
-      unique: true,
+    required: true,
+    trim: true,
+    maxlength: 32,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  profilePic: {
+    type: String,
+    default: "",
   },
 });
 
