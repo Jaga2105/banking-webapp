@@ -2,22 +2,36 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FormEvent, ChangeEvent, useState } from "react";
 import { IoMdAlert } from "react-icons/io";
+import { SiTicktick } from "react-icons/si";
 import { sendForgotPasswordEmail } from "../../api/authAPI";
+import { PulseLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 interface ErrorValues {
   error: boolean;
   errorMsg: string;
 }
+interface SuccessMsgValues {
+  status: boolean;
+  successMsg: string;
+}
 const initialErrors: ErrorValues = {
   error: false,
   errorMsg: "",
 };
+const initialSuccessMsg: SuccessMsgValues = {
+  status: false,
+  successMsg: "",
+};
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [inputError, setInputError] = useState<ErrorValues>(initialErrors);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [inputSuccess, setInputSuccess] = useState<SuccessMsgValues>(initialSuccessMsg)
   const handleOnchange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setInputError({ ...inputError, error: false, errorMsg: "" });
+    setInputSuccess({...inputSuccess, status:false, successMsg:""})
   };
   const validateEmail = (email: string) => {
     const regEx = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
@@ -36,16 +50,24 @@ const ForgotPassword: React.FC = () => {
     e.preventDefault();
     validateEmail(email);
     try {
-        if (!inputError.error) {
-            console.log("invoked")
-            const res = await sendForgotPasswordEmail(email);
-            console.log(res)
-          }
-    } catch (error) {
-        console.log(error)
+      if (!inputError.error) {
+        setIsLoading(true);
+        const res:any = await sendForgotPasswordEmail(email);
+        console.log(res.status)
+        setIsLoading(false);
+        if(res.status=="Email sent!"){
+          setInputSuccess({...inputSuccess, status:true, successMsg:"Email sent successfully!!"})
+        }else{
+          setInputError({ ...inputError, error: true, errorMsg:res.status });
+        }
+      }
+    } catch (error:any) {
+      console.log(error);
+      // toast.error("Failed sending email!!");
+      setInputError({ ...inputError, error: true, errorMsg:error.status });
     }
-    
   };
+  // console.log(set)
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-ceneter py-12 sm:px-6 lg:px-8">
       <div className="mt-8 sm:mx-auto  sm:w-md sm:max-w-md">
@@ -57,8 +79,14 @@ const ForgotPassword: React.FC = () => {
             Please enter your email address. We will send you an email to reset
             your password.
           </div>
+          {inputSuccess.status && (
+            <span className="mb-4 text-green-500 flex items-center text-lg space-x-6">
+              <SiTicktick className="mr-2" />
+              {inputSuccess.successMsg}
+            </span>
+          )}
           {inputError.error && (
-            <span className="mb-4 text-red-600 flex items-center text-md space-x-6">
+            <span className="mb-4 text-red-600 flex items-center text-lg space-x-6">
               <IoMdAlert className="mr-1" />
               {inputError.errorMsg}
             </span>
@@ -98,21 +126,16 @@ const ForgotPassword: React.FC = () => {
                 type="submit"
                 className="group relative w-full h-[40px] flex justify-center items-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 cursor-pointer hover:bg-blue-700"
               >
-                {/* {!isLoading ? (
-                  "Sign In"
+                {!isLoading ? (
+                  "Send Email"
                 ) : (
                   <PulseLoader className="text-white" color="white" size={8} />
-                )} */}
-                Send Email
+                )}
               </button>
             </div>
             <div className={`flex justify-center w-full`}>
-              <h4>New User?</h4>
-              <Link
-                to={"/register"}
-                className="text-blue-600 pl-2 cursor-pointer"
-              >
-                Register
+              <Link to={"/"} className="text-blue-600 pl-2 cursor-pointer">
+                Back to Home
               </Link>
             </div>
           </form>

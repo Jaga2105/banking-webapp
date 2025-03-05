@@ -6,31 +6,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script>
-      var status = '<%- JSON.stringify(status) %>';
+      console.log("Status")
+      var status = "<%- status %>";
+      console.log(status);
 
-      if (JSON.parse(status) == "verified") {
-        if (confirm("Do u want to login?")) {
+      if (status == "verified") {
+        if (confirm("Do u want to continue to login?")) {
           window.location.href = "http://localhost:5173/";
         }
       }
     </script>
+    <style>
+      .mainDiv{
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .formContainer{
+        height: 300px;
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px;
+        border-radius: 10px;
+        background-color: rgb(245, 243, 243);
+      }
+      .form{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .input{
+        width: 250px;
+        height: 30px;
+        margin-bottom: 10px;
+        outline: none;
+        /* border-color: rgb(91, 91, 252);
+        border-radius: 5px; */
+      }
+      .btn{
+        height: 30px;
+        width: 260px;
+        padding: 5px;
+        background-color: rgb(91, 91, 252);
+        border: none;
+        border-radius: 5px;
+        text-decoration-color: azure;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <h1><%= email%></h1>
-    <form action="" method="post">
-      <input
-        type="password"
-        name="password"
-        id="password"
-        placeholder="password"
-      /><br />
-      <input
-        type="password"
-        name="confirm-password"
-        id="confirm-password"
-        placeholder="confirm-password"
-      /><br />
-      <input type="submit" value="submit" />
-    </form>
+    <div class="mainDiv">
+    <div class="formContainer">
+      <h3><%= email%></h3>
+      <form action="" method="post" class="form">
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="New Password"
+          class="input"
+        /><br />
+        <input
+          type="password"
+          name="confirm-password"
+          id="confirm-password"
+          placeholder="Confirm Password"
+          class="input"
+        /><br />
+        <input type="submit" value="submit" class="btn"/>
+      </form>
+    </div>
+  </div>
   </body>
 </html>

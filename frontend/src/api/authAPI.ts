@@ -36,7 +36,6 @@ return await fetch(`${url}/auth/login`, {
 };
 
 export const sendForgotPasswordEmail = async (email:string):Promise<APIResponse>=>{
-  console.log(email)
   return await fetch(`${url}/auth/forgot-password`,{
     method: "POST",
     headers: {
@@ -45,8 +44,10 @@ export const sendForgotPasswordEmail = async (email:string):Promise<APIResponse>
     body: JSON.stringify({email}),
   })
   .then((response) => {
-    console.log(response)
+    console.log(response.status)
     return response.json()})
-  .then((data) => data)
+  .then((data) => {
+    console.log(data)
+    return data})
   .catch((error) => console.error("Error:", error));
 }
