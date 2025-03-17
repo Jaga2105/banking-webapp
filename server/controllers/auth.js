@@ -40,46 +40,64 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password: clientPassword } = req.body;
 
+  // Validate input
   if (!email || !clientPassword) {
-    return res.status(404).json({
+    return res.status(400).json({ // Use 400 for bad request
       error: "Please provide email and password!",
     });
   }
 
   try {
+    // Find user by email
     const user = await User.findOne({ email });
 
+    // Check if user exists
     if (!user) {
       return res.status(404).json({
-        error: "User does n't exist! ",
+        error: "User doesn't exist!",
       });
     }
 
+    // Validate password
     const isPasswordValid = await bcrypt.compare(clientPassword, user.password);
     if (!isPasswordValid) {
-      return res.status(403).json({
+      return res.status(401).json({ // Use 401 for unauthorized
         error: "Invalid credentials!",
       });
     }
 
+    // Generate JWT token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "5d",
     });
-    res.cookie("token", token, { expire: new Date() + 9999 });
 
+    // Set token in cookie
+    res.cookie("token", token, { 
+      expires: new Date(Date.now() + 9999), // Corrected `expire` to `expires`
+      httpOnly: true, // Recommended for security
+    });
+
+    // Exclude password from the response
     const { password, ...others } = user._doc;
+
+    // Send success response
     return res.status(200).json({
       user: {
         _id: others._id,
         username: others.username,
         email: others.email,
+<<<<<<< HEAD
         name:others.name,
         token,
+=======
+        token, // Optionally include token in the response
+>>>>>>> ef7c2ac4abe1405ac10e4699ef2584fc0f45dbcb
       },
     });
   } catch (error) {
+    console.error("Login error:", error); // Log the error for debugging
     return res.status(500).json({
-      error: error.message,
+      error: "Internal server error. Please try again later.",
     });
   }
 };
