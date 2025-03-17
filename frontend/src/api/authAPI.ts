@@ -44,10 +44,7 @@ export const sendForgotPasswordEmail = async (email:string):Promise<APIResponse>
     body: JSON.stringify({email}),
   })
   .then((response) => {
-    console.log(response.status)
     return response.json()})
-  .then((data) => {
-    console.log(data)
-    return data})
+  .then((data) =>data)
   .catch((error) => console.error("Error:", error));
 }

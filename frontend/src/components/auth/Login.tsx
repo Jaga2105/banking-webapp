@@ -67,36 +67,66 @@ const Login: React.FC = () => {
       ...formValues,
       [name]: value,
     });
-    setInputError({
-      ...inputError,
-      [name]: {
-        error,
-        errorMsg,
-      },
-    });
+    if (error) {
+      setInputError({
+        ...inputError,
+        [name]: {
+          error,
+          errorMsg,
+        },
+      });
+    }else{
+      setInputError({
+        ...inputError,
+        [name]: {
+          error:false,
+          errorMsg:"",
+        },
+      });
+    }
   };
   const handleOnchange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "email") {
+    if (inputError.submitError.error) {
+      setInputError((prevError) => ({
+        ...prevError,
+        ['submitError']: { error: false, errorMsg: "" },
+      }));
+    }
+    if (name === "email" && value !== "") {
       validateEmail(name, value);
-    } else if (value === "") {
+    }else if(inputError.password.error){
+        setInputError({...inputError,["password"]:{error:false, errorMsg:""}})
+    }
+    setformValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }))
+    
+  };
+  const handleOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    // handleOnchange(e);
+    if (value === "") {
       setInputError({
         ...inputError,
         [name]: {
           error: true,
-          errorMsg: "Password required",
+          errorMsg: `${name === "email" ? "Email" : "Password"} required!!`,
         },
       });
     }
-    setformValues({ ...formValues, [name]: value });
-  };
-  const handleOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
-    handleOnchange(e);
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formValues.email === "" || formValues.password === "") {
-      console.log("Please provide all credentials");
+      setInputError({
+        ...inputError,
+        ["submitError"]: {
+          error: true,
+          errorMsg: "Please provide all credentials",
+        },
+      });
       return;
     }
     const user = {
@@ -115,7 +145,9 @@ const Login: React.FC = () => {
             errorMsg: "Invalid Credentials. Please try again",
           },
         });
-        toast.error(response.error);
+        setIsLoading(false)
+        return;
+        // toast.error(response.error);
       } else {
         // setIsLoading(false);
         localStorage.setItem("user", JSON.stringify(response.user));
@@ -126,15 +158,12 @@ const Login: React.FC = () => {
             errorMsg: "",
           },
         });
-        // console.log(response.user).
         navigate("/");
-        // console.log("Navigated..");
       }
       setIsLoading(false);
     } catch (error) {
       alert(error);
     }
-    console.log("submitted..");
     navigate("/");
   };
   useEffect(() => {
@@ -193,8 +222,8 @@ const Login: React.FC = () => {
                 <span>Password</span>{" "}
                 <div className="group">
                   <GoQuestion className="h-4 w-4 text-blue-700"></GoQuestion>
-                  <span className="absolute left-22 -top-10 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 z-10">
-                    Dummy@123
+                  <span className="absolute left-20 -top-5 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 z-10">
+                    i.e.Dummy@123
                   </span>
                 </div>
               </label>

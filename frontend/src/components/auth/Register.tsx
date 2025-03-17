@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
+import { GoQuestion } from "react-icons/go";
 import { registerUser } from "../../api/authAPI";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -46,7 +47,8 @@ const initialErrors: Errors = {
   },
 };
 const Register: React.FC = () => {
-  const [visible, setVisible] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues);
   const [errors, setErrors] = useState<Errors>(initialErrors);
 
@@ -220,6 +222,7 @@ const Register: React.FC = () => {
                   } sm:text-sm`}
                     onChange={handleOnchange}
                     onBlur={handleOnBlur}
+                    placeholder="Enter your name.."
                 />
                 {errors.name.error && (
                   <p className="text-red-500">{errors.name.errorMsg}</p>
@@ -255,13 +258,19 @@ const Register: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="relative flex items-center space-x-2 text-sm font-medium text-gray-700"
               >
-                Create Password
+                <span>Password</span>{" "}
+                <div className="group">
+                  <GoQuestion className="h-4 w-4 text-blue-700"></GoQuestion>
+                  <span className="absolute left-20 -top-5 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 z-10">
+                    i.e.Dummy@123
+                  </span>
+                </div>
               </label>
               <div className="mt-1 relative">
                 <input
-                  type={visible ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   autoComplete="off"
                   className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none  ${
@@ -272,15 +281,15 @@ const Register: React.FC = () => {
                     onChange={handleOnchange}
                     onBlur={handleOnBlur}
                 />
-                {visible ? (
+                {showPassword ? (
                   <BsEye
                     className="absolute right-2 top-2 cursor-pointer h-6 w-6"
-                    onClick={() => setVisible(false)}
+                    onClick={() => setShowPassword(false)}
                   />
                 ) : (
                   <BsEyeSlash
                     className="absolute right-2 top-2 cursor-pointer h-6 w-6"
-                    onClick={() => setVisible(true)}
+                    onClick={() => setShowPassword(true)}
                   />
                 )}
                 {errors.password.error && (
@@ -297,7 +306,7 @@ const Register: React.FC = () => {
               </label>
               <div className="mt-1 relative">
                 <input
-                  type={visible ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirm_password"
                   autoComplete="off"
                   className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none  ${
@@ -308,15 +317,15 @@ const Register: React.FC = () => {
                     onChange={handleOnchange}
                     onBlur={handleOnBlur}
                 />
-                {visible ? (
+                {showConfirmPassword ? (
                   <BsEye
                     className="absolute right-2 top-2 cursor-pointer h-6 w-6"
-                    onClick={() => setVisible(false)}
+                    onClick={() => setShowConfirmPassword(false)}
                   />
                 ) : (
                   <BsEyeSlash
                     className="absolute right-2 top-2 cursor-pointer h-6 w-6"
-                    onClick={() => setVisible(true)}
+                    onClick={() => setShowConfirmPassword(true)}
                   />
                 )}
                  {errors.confirm_password.error && (

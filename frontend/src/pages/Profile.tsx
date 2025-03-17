@@ -5,11 +5,13 @@ import profileImg from "../assets/profile_img_placeholder.svg";
 import { IoCameraOutline } from "react-icons/io5";
 import imageCompression from "browser-image-compression";
 import GridLoader from "react-spinners/GridLoader";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [changeDetected, setchangeDetected] = useState<boolean>(false);
   const [isUserUpdated, setIsUserUpdated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   let loggedInUser: any;
 
   const userJSON = localStorage.getItem("user");
@@ -18,31 +20,6 @@ const Profile = () => {
     loggedInUser = JSON.parse(userJSON);
   }
 
-  //   const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
-  //     let imgFile:File = e.target.files ? e.target.files[0]: null;
-
-  //     try {
-  //         // const compressedImg = await imageCompression(imgFile, options);
-  //         let reader = new FileReader();
-  //         // Convert the file to base64 text
-  //         reader.readAsDataURL(imgFile);
-
-  //         // on reader load somthing...
-  //         reader.onload = () => {
-  //           // Make a fileInfo Object
-  //           let fileInfo = {
-  //             name: imgFile.name,
-  //             type: imgFile.type,
-  //             size: Math.round(imgFile.size / 1000) + " kB",
-  //             base64: reader.result,
-  //             file: imgFile,
-  //           };
-  //           onDone(fileInfo);
-  //         };
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //   }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setchangeDetected(true);
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
@@ -82,21 +59,31 @@ const Profile = () => {
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const res = await updateUser(loggedInUser._id, userDetails);
     if (res) {
       setchangeDetected(false);
+      setIsLoading(false);
       setIsUserUpdated((prev) => !prev);
     }
   };
+  const fetchUserDetails = async () => {
+    const userResponse: any = await getUserDetails(loggedInUser._id);
+    setUserDetails(userResponse);
+  };
 
+  const handleOnCancel = () =>{
+    setchangeDetected(false)
+    fetchUserDetails()
+  }
   useEffect(() => {
     // if (isUserUpdated) {
     //   setUserDetails(null);
     // }
-    const fetchUserDetails = async () => {
-      const userResponse: any = await getUserDetails(loggedInUser._id);
-      setUserDetails(userResponse);
-    };
+    // const fetchUserDetails = async () => {
+    //   const userResponse: any = await getUserDetails(loggedInUser._id);
+    //   setUserDetails(userResponse);
+    // };
     fetchUserDetails();
   }, [loggedInUser._id, isUserUpdated]);
   return (
@@ -140,6 +127,23 @@ const Profile = () => {
                 disabled
               />
             </div>
+            <div className="flex flex-col mt-4">
+              <label
+                htmlFor="phone"
+                className="text-md font-semibold text-gray-400 uppercase"
+              >
+                Phone No.
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                onChange={handleInputChange}
+                value={`${userDetails.phone} ? ${userDetails.phone} : "Enter your phone no."`}
+                className="border-b-2  border-gray-300 p-2 focus:outline-none text-lg cursor-not-allowed"
+                disabled
+              />
+            </div>
           </div>
           <div className="w-1/2 h-full flex justify-center items-center">
             <div className="relative h-44 w-44 bg-gray-200 flex justify-center items-center rounded-full object-cover">
@@ -171,12 +175,22 @@ const Profile = () => {
             </div>
           </div>
           {changeDetected && (
-            <button
-              type="submit"
-              className="px-2 py-1 bg-green-500 text-white font-semibold absolute left-1/2 transform -translate-x-1/2 bottom-3 rounded-md cursor-pointer"
-            >
-              Update
-            </button>
+            <div className="flex gap-6 absolute left-1/2 transform -translate-x-1/2 bottom-3">
+              <button className="px-2 py-1 bg-red-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
+              onClick={handleOnCancel}>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-2 py-1 bg-green-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
+              >
+                {!isLoading ? (
+                  "Update"
+                ) : (
+                  <PulseLoader className="text-white" color="white" size={8} />
+                )}
+              </button>
+            </div>
           )}
         </form>
       ) : (

@@ -73,6 +73,7 @@ exports.login = async (req, res) => {
         _id: others._id,
         username: others.username,
         email: others.email,
+        name:others.name,
         token,
       },
     });
@@ -85,10 +86,8 @@ exports.login = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
-  console.log(email);
   try {
     const oldUser = await User.findOne({ email });
-    console.log(oldUser);
     if (!oldUser) {
       return res.status(404).json({ status: "User does not Exists!!" });
     }
@@ -123,9 +122,7 @@ exports.forgotPassword = async (req, res) => {
       }
     });
     return res.status(200).json({ status: "Email sent!" });
-    // console.log(res);
   } catch (error) {
-    // return res.status(500).json({status:"Something went wrong"})
     return res
       .status(500)
       .json({ status: "Failed sending Email", error: error.message });
@@ -135,7 +132,6 @@ exports.forgotPassword = async (req, res) => {
 exports.sendResetPasswordMail = async (req, res) => {
   const { id, token } = req.params;
   const oldUser = await User.findOne({ _id: id });
-  console.log(oldUser);
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
   }
@@ -144,15 +140,12 @@ exports.sendResetPasswordMail = async (req, res) => {
     const verify = jwt.verify(token, secret);
     res.render("index", { email: verify.email, status: "Not Verified" });
   } catch (error) {
-    console.log(error);
     res.send("Not Verified");
   }
 };
 exports.resetPassword = async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
-  console.log(id);
-  console.log(password);
   const oldUser = await User.findOne({ _id: id });
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
@@ -171,10 +164,8 @@ exports.resetPassword = async (req, res) => {
         },
       }
     );
-    console.log(result);
     res.render("index", { email: verify.email, status: "verified" });
   } catch (error) {
-    console.log(error);
     res.json({ status: "Something Went Wrong" });
   }
 };

@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Root from "./pages/Root";
 import Home from "./pages/Home";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -32,6 +33,10 @@ function App() {
         {
           path:"/profile",
           element:<Profile/>
+        },
+        {
+          path:"/admin",
+          element:<AdminDashboard/>
         }
       ]
     },
