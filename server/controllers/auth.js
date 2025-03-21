@@ -86,12 +86,8 @@ exports.login = async (req, res) => {
         _id: others._id,
         username: others.username,
         email: others.email,
-<<<<<<< HEAD
         name:others.name,
         token,
-=======
-        token, // Optionally include token in the response
->>>>>>> ef7c2ac4abe1405ac10e4699ef2584fc0f45dbcb
       },
     });
   } catch (error) {

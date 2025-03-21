@@ -6,12 +6,14 @@ import { IoCameraOutline } from "react-icons/io5";
 import imageCompression from "browser-image-compression";
 import GridLoader from "react-spinners/GridLoader";
 import PulseLoader from "react-spinners/PulseLoader";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [changeDetected, setchangeDetected] = useState<boolean>(false);
   const [isUserUpdated, setIsUserUpdated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   let loggedInUser: any;
 
   const userJSON = localStorage.getItem("user");
@@ -60,7 +62,7 @@ const Profile = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    const res = await updateUser(loggedInUser._id, userDetails);
+    const res = await updateUser(loggedInUser?._id, userDetails);
     if (res) {
       setchangeDetected(false);
       setIsLoading(false);
@@ -68,14 +70,14 @@ const Profile = () => {
     }
   };
   const fetchUserDetails = async () => {
-    const userResponse: any = await getUserDetails(loggedInUser._id);
+    const userResponse: any = await getUserDetails(loggedInUser?._id);
     setUserDetails(userResponse);
   };
 
-  const handleOnCancel = () =>{
-    setchangeDetected(false)
-    fetchUserDetails()
-  }
+  const handleOnCancel = () => {
+    setchangeDetected(false);
+    fetchUserDetails();
+  };
   useEffect(() => {
     // if (isUserUpdated) {
     //   setUserDetails(null);
@@ -84,8 +86,15 @@ const Profile = () => {
     //   const userResponse: any = await getUserDetails(loggedInUser._id);
     //   setUserDetails(userResponse);
     // };
-    fetchUserDetails();
-  }, [loggedInUser._id, isUserUpdated]);
+    if (!loggedInUser) {
+      navigate("/");
+    } else {
+      fetchUserDetails();
+    }
+  }, [loggedInUser?._id, isUserUpdated]);
+  useEffect(() => {
+    !loggedInUser && navigate("/login");
+  }, [loggedInUser]);
   return (
     <div className="flex h-130 w-full items-center justify-center">
       {userDetails ? (
@@ -139,9 +148,10 @@ const Profile = () => {
                 name="phone"
                 id="phone"
                 onChange={handleInputChange}
-                value={`${userDetails.phone} ? ${userDetails.phone} : "Enter your phone no."`}
-                className="border-b-2  border-gray-300 p-2 focus:outline-none text-lg cursor-not-allowed"
-                disabled
+                // value={`${userDetails?.phone} ? ${userDetails?.phone} : ""`}
+                value={userDetails?.phone ? userDetails?.phone : ""}
+                placeholder="Enter your phone no."
+                className="border-b-2  border-gray-300 p-2 focus:outline-none text-lg"
               />
             </div>
           </div>
@@ -176,8 +186,10 @@ const Profile = () => {
           </div>
           {changeDetected && (
             <div className="flex gap-6 absolute left-1/2 transform -translate-x-1/2 bottom-3">
-              <button className="px-2 py-1 bg-red-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
-              onClick={handleOnCancel}>
+              <button
+                className="px-2 py-1 bg-red-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
+                onClick={handleOnCancel}
+              >
                 Cancel
               </button>
               <button

@@ -3,10 +3,12 @@ import { LuLogOut } from "react-icons/lu";
 import { IoPersonSharp } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { getUserDetails } from "../api/userAPI";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState<any>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const routeName: any = location.pathname.substring(1);
@@ -36,6 +38,10 @@ const NavBar = () => {
       setShowDropdown(false);
     }
   };
+  const fetchUserDetails = async () => {
+    const userResponse: any = await getUserDetails(loggedInUser?._id);
+    setUserDetails(userResponse);
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -43,6 +49,11 @@ const NavBar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+  console.log(userDetails);
   return (
     // <div className="h-12 flex justify-between items-center px-8 w-full shadow-lg fixed z-10">
     <div className="flex justify-between items-center w-full px-8">
@@ -65,18 +76,20 @@ const NavBar = () => {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           >
-            <span className="text-xl font-semibold text-gray-600">{`${
-              loggedInUser ? loggedInUser.name : "Someone"
-            }'s`}</span>
-            {loggedInUser?.profilePic ? (
-              <img src={loggedInUser?.profileImg} alt="Profile Image" />
+            {userDetails && (
+              <span className="text-xl font-semibold text-gray-600">{`${userDetails.name}'s`}</span>
+            )}
+            {userDetails?.profilePic ? (
+              <img src={userDetails?.profilePic} alt="Profile Image" className="h-10 w-10 rounded-full shadow-md" />
             ) : (
+              <div className="h-10 w-10 bg-gray-200 rounded-full flex justify-center items-center">
               <IoPersonSharp
                 className="h-6 w-6 cursor-pointer relative text-gray-600"
                 // onClick={() => setShowDropdown((prev) => !prev)}
                 // onMouseEnter={handleOnMouseEnter}
                 // onMouseLeave={handleOnMouseLeave}
               />
+              </div>
             )}
           </div>
           {showDropdown && (

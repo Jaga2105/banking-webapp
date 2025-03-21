@@ -6,6 +6,7 @@ require('dotenv').config();
 const app = express();
 const authRoute = require('./routes/authRoute')
 const userRoute = require('./routes/userRoute')
+const customerRoute = require('./routes/customerRoute')
 
 app.use(cookieParser());
 app.use(cors());
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.use("/auth", authRoute)
 app.use("/user", userRoute)
+app.use("/admin", customerRoute)
 
 app.get("/", (req,res)=>{
     res.send("Server is listening")

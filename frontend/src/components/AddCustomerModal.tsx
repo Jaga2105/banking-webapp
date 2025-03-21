@@ -1,9 +1,13 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { IoCameraOutline } from "react-icons/io5";
 import profileImg from "../assets/profile_img_placeholder.svg";
+import imageCompression from "browser-image-compression";
 import {ChangeEvent} from 'react';
 import {useState} from 'react';
+import { addNewCustomer } from "../api/customerAPI";
+import { toast } from "react-toastify";
+import { PulseLoader } from "react-spinners";
 
 // interface props{
 //     open:boolean,
@@ -17,7 +21,7 @@ interface FormValueTypes{
     name:string,
     careOf:string,
     phone:string,
-    aadhaar:number,
+    aadhaar:string,
     address:string,
     profilePic:string
 }
@@ -27,13 +31,14 @@ interface FormErrorTypes{
     phone:boolean,
     aadhaar:boolean,
     address:boolean,
-    profilePic:boolean
+    profilePic:boolean,
+    submitError:""
 }
 const initialFormValues:FormValueTypes = {
     name:"",
     careOf:"",
     phone:"",
-    aadhaar:0,
+    aadhaar:"",
     address:"",
     profilePic:""
 }
@@ -43,7 +48,8 @@ const initialFormErrors:FormErrorTypes = {
     phone:false,
     aadhaar:false,
     address:false,
-    profilePic:false
+    profilePic:false,
+    submitError:""
 }
 
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
@@ -52,39 +58,61 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
 }) => {
     const [formValues, setFormValues] = useState<FormValueTypes>(initialFormValues);
     const [formErrors, setFormErrors] = useState<FormErrorTypes>(initialFormErrors);
+    const [isLoading, setIsLoading] = useState(false);
     
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) =>{
         const {name, value} = e.target;
-        console.log(typeof value)
+        console.log(name)
+        if(formErrors.name){
+          console.log(formErrors.name)
+          if(name==="name" || name==="careOf"){
+            validateName(name, value)
+          }else if(name==="phone"){
+            validatePhone(name, value)
+          }else if(name==="aadhaar"){
+            validateAadhaar(name, value)
+          }
+        }
         setFormValues({...formValues, [name]:value})
     }
     const handleOnTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) =>{
         const {name, value} = e.target;
+        if(formErrors.name){
+          validateAddress(name, value)
+        }
         setFormValues({...formValues, [name]:value})
     }
     const validateName = (name:string,value:string) =>{
         if(value.length<5){
             setFormErrors({...formErrors,[name]:true});
             // return;
+        }else{
+          setFormErrors({...formErrors,[name]:false});
         }
     }
     const validatePhone = (name:string,value:string) =>{
         const phoneRegx = /^[6-9]\d{9}$/;
-        if(phoneRegx.test(value)){
+        if(!phoneRegx.test(value)){
             setFormErrors({...formErrors,[name]:true});
+        }else{
+          setFormErrors({...formErrors,[name]:false});
         }
     }
     const validateAadhaar = (name:string,value:string) =>{
         const aadhaarRegex = /^[2-9]\d{11}$/;
-        if(aadhaarRegex.test(value)){
+        if(!aadhaarRegex.test(value)){
             setFormErrors({...formErrors,[name]:true});
+        }else{
+          setFormErrors({...formErrors,[name]:false});
         }
     }
     const validateAddress = (name:string,value:string) =>{
         const addressRegex = /^[a-zA-Z0-9\s,.'-]{3,}$/;
-        if(addressRegex.test(value)){
+        if(!addressRegex.test(value)){
             setFormErrors({...formErrors,[name]:true});
+        }else{
+          setFormErrors({...formErrors,[name]:false});
         }
     }
     const handleOnBlur =(e: ChangeEvent<HTMLInputElement>)=>{
@@ -102,6 +130,66 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         const {name, value} = e.target;
         validateAddress(name, value);
     }
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      // const target = e.target as HTMLInputElement;
+      // setchangeDetected(true);
+      if (e.target.files && e.target.files[0]) {
+        const imgFile: File = e.target.files[0]; // Ensured it's not null
+        // Now you can safely pass `imgFile` to any function expecting a `Blob`
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+        try {
+          const compressedImg = await imageCompression(imgFile, options);
+          let reader = new FileReader();
+  
+          reader.readAsDataURL(imgFile);
+  
+          reader.onload = () => {
+            if (typeof reader.result === 'string') {
+              const fileInfo = {
+                name: imgFile.name,
+                type: imgFile.type,
+                size: Math.round(imgFile.size / 1000) + " kb",
+                base64: reader.result, // Safe to use as string
+                file: compressedImg,
+              };
+    
+              // Update form values with the new profile picture
+              setFormValues((prevValues) => ({
+                ...prevValues,
+                profilePic: fileInfo.base64,
+              }));
+            } else {
+              console.error("FileReader result is not a string.");
+            }
+    
+          };
+        } catch (error) {}
+      } else {
+        console.error("No file selected or files is null");
+      }
+    };
+
+    const handleClose = () =>{
+      setFormValues(initialFormValues)
+      setFormErrors(initialFormErrors)
+      handleOnclickAddCustomer();
+    }
+    const handleSubmit = async(e:FormEvent<HTMLFormElement>) =>{
+      e.preventDefault();
+      setIsLoading(true);
+      const res = await addNewCustomer(formValues);
+      setIsLoading(false);
+      if(res?.error){
+        toast.error(res.error)
+      }else{
+        toast.success(res.message)
+        handleClose()
+      }
+    }
   return (
     <>
       {open && (
@@ -113,17 +201,17 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           >
             <RxCross2
               className="h-8 w-8 text-white"
-              onClick={handleOnclickAddCustomer}
+              onClick={handleClose}
             />
           </div>
           {/*Modal Backdrop */}
           <div
             className="fixed h-[100vh] w-full top-0 left-0 backdrop-contrast-50 bg-[#595959]/40"
-            onMouseDown={handleOnclickAddCustomer}
+            onMouseDown={handleClose}
           ></div>
           <form
             className={`absolute flex flex-col gap-4 h-[480px] sm:h-[450px] w-[360px] sm:w-[650px] px-4 py-4 bg-white rounded-xl overflow-y-auto`}
-            //   onSubmit={handleSubmit}
+              onSubmit={handleSubmit}
           >
             <div className="text-xl font-semibold text-gray-600 mx-auto mb-4">
               Add the Customer Dertails Here
@@ -159,7 +247,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               <div className="h-full w-full flex justify-center items-center">
                 <div className="relative h-32 w-32 bg-gray-200 flex justify-center items-center rounded-full object-cover">
                   <img
-                    src={profileImg}
+                    src={formValues?.profilePic || profileImg }
                     // src={
                     //   userDetails?.profilePic === ""
                     //     ? profileImg
@@ -181,7 +269,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                       id="profilePic"
                       className="hidden"
                       accept=".png, .jpg, .jpeg"
-                      //   onChange={handleFileChange}
+                        onChange={handleFileChange}
                     />
                     <IoCameraOutline />
                   </label>
@@ -233,7 +321,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             </div>
             <div className="flex gap-6 absolute left-1/2 transform -translate-x-1/2 bottom-6">
               <button className="px-2 py-1 bg-red-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
-            //   onClick={handleOnCancel}
+              onClick={handleClose}
               >
                 Cancel
               </button>
@@ -241,12 +329,12 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                 type="submit"
                 className="px-2 py-1 bg-green-500 text-white font-semibold  rounded-sm cursor-pointer w-[100px]"
               >
-                Add
-                {/* {!isLoading ? (
-                  "Update"
+                {/* Add */}
+                {!isLoading ? (
+                  "Add"
                 ) : (
                   <PulseLoader className="text-white" color="white" size={8} />
-                )} */}
+                )}
               </button>
             </div>
           </form>
