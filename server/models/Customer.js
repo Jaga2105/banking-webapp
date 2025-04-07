@@ -7,9 +7,10 @@ const CustomerSchema = new mongoose.Schema({
     trim: true,
     maxlength: 32,
   },
-  careOf: {
+  email: {
     type: String,
     required: true,
+    unique:true,
     trim: true,
     maxlength: 32,
   },
@@ -32,6 +33,15 @@ const CustomerSchema = new mongoose.Schema({
   profilePic: {
     type: String,
     default: "",
+  },
+  accountNo:{
+    type:String,
+    default:""
+
+  },
+  active:{
+    type:Boolean,
+    default:true
   },
   createdAt: { type: Date, default: Date.now }, // Add this field
 });

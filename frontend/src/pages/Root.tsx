@@ -9,7 +9,8 @@ const Root: React.FC = () => {
 
   
   const location = useLocation();
-  const routeName: any = location.pathname.substring(1);
+  const routeName: any = location.pathname.substring(1,6);
+  console.log(routeName)
   useEffect(() => {
     if(routeName==="admin"){
       navigate("/admin")

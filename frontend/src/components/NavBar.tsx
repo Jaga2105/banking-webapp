@@ -11,7 +11,7 @@ const NavBar = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const routeName: any = location.pathname.substring(1);
+  const routeName: any = location.pathname.substring(1,6);
   console.log(routeName);
   const storedUser: any = localStorage.getItem("user");
   let loggedInUser: any;
@@ -118,48 +118,6 @@ const NavBar = () => {
           )}
         </div>
       )}
-      {/* <div className="">
-        <div
-          className="flex gap-1"
-          onMouseEnter={handleOnMouseEnter}
-          onMouseLeave={handleOnMouseLeave}
-        >
-          <span className="text-xl font-semibold text-gray-600">{`${loggedInUser ?loggedInUser.name:"Someone"}'s`}</span>
-          {loggedInUser?.profilePic ? (
-              <img src={loggedInUser?.profileImg} alt="Profile Image" />
-          ):(
-            <IoPersonSharp
-              className="h-6 w-6 cursor-pointer relative text-gray-600"
-              // onClick={() => setShowDropdown((prev) => !prev)}
-              // onMouseEnter={handleOnMouseEnter}
-              // onMouseLeave={handleOnMouseLeave}
-            />)}
-        </div>
-        {showDropdown && (
-          <div
-            className={`absolute z-1 right-10 shadow-md rounded-md bg-gray-50 py-4`}
-            ref={divRef}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          >
-            <Link
-              to={`/profile`}
-              className="flex gap-4 items-center hover:bg-gray-200 px-4 py-2 cursor-pointer"
-              onClick={() => setShowDropdown((prev) => !prev)}
-            >
-              <CgProfile className="h-6 w-6 cursor-pointer" />
-              <span className="text-md font-semibold">My Profile</span>
-            </Link>
-            <div
-              className="flex gap-4 items-center hover:bg-gray-200 px-4 py-2 cursor-pointer"
-              onClick={handleLogout}
-            >
-              <LuLogOut className="h-6 w-6 cursor-pointer" />
-              <span className="text-md font-semibold">Logout</span>
-            </div>
-          </div>
-        )}
-      </div> */}
     </div>
   );
 };

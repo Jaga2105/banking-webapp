@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import Root from "./pages/Root";
 import Home from "./pages/Home";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import CustomerProfile from "./pages/admin/CustomerProfile";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -24,31 +25,41 @@ function App() {
     {
       path: "/",
       // element: user ? <Home /> : <Navigate to={"/login"}/>,
-      element:<Root/>,
-      children:[
+      element: <Root />,
+      children: [
         {
-          path:"/",
-          element:<Home/>
+          path: "/",
+          element: <Home />,
         },
         {
-          path:"/profile",
-          element:<Profile/>
+          path: "/profile",
+          element: <Profile />,
         },
         {
-          path:"/admin",
-          element:<AdminDashboard/>
-        }
-      ]
+          path: "/admin",
+          element: <AdminDashboard />,
+          // children: [
+          //   {
+          //     path: "/cprofile",
+          //     element: <CustomerProfile />,
+          //   },
+          // ],
+        },
+        {
+          path: "/admin/cid/:id",
+          element: <CustomerProfile />,
+        },
+      ],
     },
     {
       path: "/login",
       // element: user ? <Navigate to={"/forgot-password"} /> : <Login />,
-      element:<Login/>
+      element: <Login />,
     },
     {
       path: "/register",
       // element: user ? <Navigate to={"/"} /> : <Register />,
-      element:<Register />
+      element: <Register />,
     },
     {
       path: "/forgot-password",

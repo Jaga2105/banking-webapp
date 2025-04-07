@@ -19,7 +19,7 @@ interface AddCustomerModalProps {
 }
 interface FormValueTypes{
     name:string,
-    careOf:string,
+    email:string,
     phone:string,
     aadhaar:string,
     address:string,
@@ -27,7 +27,7 @@ interface FormValueTypes{
 }
 interface FormErrorTypes{
     name:boolean,
-    careOf:boolean,
+    email:boolean,
     phone:boolean,
     aadhaar:boolean,
     address:boolean,
@@ -36,7 +36,7 @@ interface FormErrorTypes{
 }
 const initialFormValues:FormValueTypes = {
     name:"",
-    careOf:"",
+    email:"",
     phone:"",
     aadhaar:"",
     address:"",
@@ -44,7 +44,7 @@ const initialFormValues:FormValueTypes = {
 }
 const initialFormErrors:FormErrorTypes = {
     name:false,
-    careOf:false,
+    email:false,
     phone:false,
     aadhaar:false,
     address:false,
@@ -66,8 +66,10 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         console.log(name)
         if(formErrors.name){
           console.log(formErrors.name)
-          if(name==="name" || name==="careOf"){
+          if(name==="name"){
             validateName(name, value)
+          }else if(name==="email"){
+            validateEmail(name, value)
           }else if(name==="phone"){
             validatePhone(name, value)
           }else if(name==="aadhaar"){
@@ -91,6 +93,14 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           setFormErrors({...formErrors,[name]:false});
         }
     }
+    const validateEmail = (name:string,value:string) =>{
+      const emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+      if(!emailRegex.test(value)){
+          setFormErrors({...formErrors,[name]:true});
+      }else{
+        setFormErrors({...formErrors,[name]:false});
+      }
+  }
     const validatePhone = (name:string,value:string) =>{
         const phoneRegx = /^[6-9]\d{9}$/;
         if(!phoneRegx.test(value)){
@@ -118,8 +128,10 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     const handleOnBlur =(e: ChangeEvent<HTMLInputElement>)=>{
         const {name, value} = e.target;
         console.log(name)
-        if(name==="name" || name==="careOf"){
+        if(name==="name"){
             validateName(name,value)
+        }else if(name==="email"){
+            validateEmail(name, value)
         }else if(name==="phone"){
             validatePhone(name,value)
         }else if(name==="aadhaar"){
@@ -231,14 +243,14 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="careOf">C/O:</label>
+                  <label htmlFor="careOf">Email</label>
                   <input
-                    type="text"
-                    name="careOf"
-                    id="careOf"
+                    type="email"
+                    name="email"
+                    id="email"
                     // className={`w-[300px] px-2 py-1 border border-gray-300 shadow-sm rounded-sm focus:outline-none ${formErrors.careOf? "border-red-500" : "focus:border-blue-500"}`}
-                    className={`w-[300px] px-2 py-1 border border-gray-300 shadow-sm rounded-sm focus:outline-none ${formErrors.careOf? "border-red-500" : "focus:border-blue-500"}`}
-                    value={formValues.careOf}
+                    className={`w-[300px] px-2 py-1 border border-gray-300 shadow-sm rounded-sm focus:outline-none ${formErrors.email? "border-red-500" : "focus:border-blue-500"}`}
+                    value={formValues.email}
                     onChange={handleOnChange}
                     onBlur={handleOnBlur}
                   />
