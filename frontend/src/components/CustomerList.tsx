@@ -26,15 +26,9 @@ const CustomerList = ({
   //   }
   // };
   const handleStatusChange = async (id: string, status: boolean) => {
-    console.log(status);
-    // if(status===true){
-
-    // }
     setShowCustomerStatusDropdown("");
     const res: any = await changeCustomerStatus(id, status);
-    console.log(res);
     if (res) {
-      console.log(status)
       setIsCustomerStatusChanged((prev:boolean)=>!prev);
     }
   };
@@ -58,7 +52,6 @@ const CustomerList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  console.log(activeTab)
   return (
     <div className="flex flex-col gap-2">
       {list.length > 0 ? (

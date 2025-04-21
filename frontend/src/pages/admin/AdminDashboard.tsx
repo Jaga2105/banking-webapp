@@ -102,7 +102,7 @@ const AdminDashboard: React.FC = () => {
     fetchCustomers();
   }, [
     showAddCustomerModal.openAddModal,
-    showDeleteCustomerModal.id,
+    showDeleteCustomerModal.id,showEditCustomerModal.id,
     isCustomerStatusChanged,
   ]);
   return (

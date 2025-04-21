@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { getCustomer } from "../../api/customerAPI";
 import { GridLoader } from "react-spinners";
 import { RelativeTime } from "../../helpers/RelativeTime";
@@ -8,6 +8,10 @@ const CustomerProfile = () => {
   const [customerDetails, setCustomerDetails] = useState<any>(null);
   const params: any = useParams();
   const id = params.id;
+
+  const location = useLocation();
+  console.log(location.pathname)
+  console.log(id)
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       const res = await getCustomer(id);

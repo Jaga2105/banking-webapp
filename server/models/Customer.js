@@ -37,11 +37,19 @@ const CustomerSchema = new mongoose.Schema({
   accountNo:{
     type:String,
     default:""
-
   },
   active:{
     type:Boolean,
     default:true
+  },
+  password:{
+    type: String,
+    required: true,
+    trim:true
+  },
+  firstTimeLogin:{
+    type: Boolean,
+    default: true
   },
   createdAt: { type: Date, default: Date.now }, // Add this field
 });

@@ -12,7 +12,6 @@ const NavBar = () => {
   const divRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const routeName: any = location.pathname.substring(1,6);
-  console.log(routeName);
   const storedUser: any = localStorage.getItem("user");
   let loggedInUser: any;
   if (storedUser) {
@@ -40,7 +39,7 @@ const NavBar = () => {
   };
   const fetchUserDetails = async () => {
     const userResponse: any = await getUserDetails(loggedInUser?._id);
-    setUserDetails(userResponse);
+    setUserDetails(userResponse.others);
   };
 
   useEffect(() => {
@@ -53,7 +52,6 @@ const NavBar = () => {
   useEffect(() => {
     fetchUserDetails();
   }, []);
-  console.log(userDetails);
   return (
     // <div className="h-12 flex justify-between items-center px-8 w-full shadow-lg fixed z-10">
     <div className="flex justify-between items-center w-full px-8">

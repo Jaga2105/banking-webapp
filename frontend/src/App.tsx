@@ -19,8 +19,6 @@ import CustomerProfile from "./pages/admin/CustomerProfile";
 
 function App() {
   const user = localStorage.getItem("user");
-  // console.log("In App after login")
-  console.log(user);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -38,12 +36,6 @@ function App() {
         {
           path: "/admin",
           element: <AdminDashboard />,
-          // children: [
-          //   {
-          //     path: "/cprofile",
-          //     element: <CustomerProfile />,
-          //   },
-          // ],
         },
         {
           path: "/admin/cid/:id",
@@ -66,7 +58,7 @@ function App() {
       element: <ForgotPassword />,
     },
     {
-      path: "/reset-password/:id/:token",
+      path: "/reset-password",
       element: <ResetPassword />,
     },
     {

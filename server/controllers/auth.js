@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const Customer = require("../models/Customer");
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -49,7 +50,8 @@ exports.login = async (req, res) => {
 
   try {
     // Find user by email
-    const user = await User.findOne({ email });
+    const user = await Customer.findOne({ email });
+    console.log(user)
 
     // Check if user exists
     if (!user) {
@@ -82,13 +84,14 @@ exports.login = async (req, res) => {
 
     // Send success response
     return res.status(200).json({
-      user: {
-        _id: others._id,
-        username: others.username,
-        email: others.email,
-        name:others.name,
-        token,
-      },
+      // user: {
+      //   _id: others._id,
+      //   username: others.username,
+      //   email: others.email,
+      //   name:others.name,
+      //   token,
+      // },
+      user: others
     });
   } catch (error) {
     console.error("Login error:", error); // Log the error for debugging
@@ -111,13 +114,15 @@ exports.forgotPassword = async (req, res) => {
     });
     const link = `${process.env.URL}/auth/reset-password/${oldUser._id}/${token}`;
     var transporter = nodemailer.createTransport({
-      // service: "gmail",
-      host: process.env.SMTP_HOST,
+      service: "gmail",
+      host: process.env.HOST,
       port: 587,
       secure: false,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        // user: process.env.SMTP_USER,
+        user: process.env.EMAIL,
+        // pass: process.env.SMTP_PASSWORD,
+        pass: process.env.PASSWORD,
       },
     });
 

@@ -20,13 +20,11 @@ const DeleteCustomerModal: React.FC<DeleteCustomerModalProps> = ({
         e.preventDefault();
         setIsLoading(true)
         const result = await deleteCustomer(id);
-        console.log(result)
         if(result){
             toast.success("Customer deleted successfully")
             handleOnclickDeleteCustomer("")
         }
     }
-  console.log(id);
   return (
     <>
       {open && (

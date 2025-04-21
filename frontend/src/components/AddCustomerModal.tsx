@@ -194,6 +194,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       e.preventDefault();
       setIsLoading(true);
       const res = await addNewCustomer(formValues);
+      console.log(res)
       setIsLoading(false);
       if(res?.error){
         toast.error(res.error)

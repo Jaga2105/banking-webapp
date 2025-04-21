@@ -1,4 +1,4 @@
-const { addNewCustomer, getAllCustomers,deleteCustomerById, getCustomerById, changeCustomerStatus } = require("../controllers/customer");
+const { addNewCustomer, getAllCustomers,deleteCustomerById, getCustomerById, changeCustomerStatus, changePassword } = require("../controllers/customer");
 
 const router = require("express").Router();
 
