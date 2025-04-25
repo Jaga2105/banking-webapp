@@ -1,0 +1,177 @@
+import React, { useEffect, useState } from "react";
+import { getUserDetails } from "../../api/userAPI";
+import { IoPersonSharp } from "react-icons/io5";
+import { TbFilterSearch } from "react-icons/tb";
+import { RiArrowRightUpLine } from "react-icons/ri";
+import SendMoney from "../../components/modals/SendMoney";
+
+const Transactions = () => {
+  const [userDetails, setUserDetails] = useState<any>(null);
+  const [showSendMoneyModal, setShowSendMoneyModal] = useState<boolean>(false);
+
+  const storedUser: any = localStorage.getItem("user");
+  let loggedInUser: any;
+  if (storedUser) {
+    // Parse the string into a JavaScript object
+    loggedInUser = JSON.parse(storedUser);
+  }
+
+  const handleShowSendMoneyModal = (flag: boolean) => {
+    setShowSendMoneyModal(flag);
+  };
+
+  const fetchUserDetails = async () => {
+    const userResponse: any = await getUserDetails(loggedInUser?._id);
+    setUserDetails(userResponse.others);
+  };
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+  return (
+    <div className="flex flex-col justify-center items-center">
+      <div className="h-[180px] w-[800px] flex justify-center items-center bg-blue-200 mt-6 rounded-t-md">
+        <div className="flex gap-10 justify-center items-center">
+          <div className="flex justify-center items-center">
+            {userDetails?.profilePic ? (
+              // <motion.img
+              <img
+                //   initial={{ scale: 0 }}
+                //   animate={{ scale: 1 }}
+                src={userDetails?.profilePic}
+                alt="Profile Image"
+                className="h-28 w-28 rounded-full shadow-lg"
+              />
+            ) : (
+              // <motion.div
+              //   initial={{ scale: 0 }}
+              //   animate={{ scale: 1 }}
+              <div className="h-28 w-28 bg-gray-200 rounded-full flex justify-center items-center">
+                <IoPersonSharp className="h-24 w-24 cursor-pointer relative text-gray-600" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="">
+              {userDetails && (
+                // <motion.span
+                //   initial={{ opacity: 0 }}
+                //   animate={{ opacity: 1 }}
+                <span className="text-xl font-semibold text-gray-600">
+                  {`${userDetails.name}`}
+                </span>
+              )}
+            </div>
+            <div className="">
+              {userDetails && (
+                // <motion.span
+                //   initial={{ opacity: 0 }}
+                //   animate={{ opacity: 1 }}
+                <span className="text-xl font-semibold text-gray-600">
+                  {`A/c - ${userDetails.accountNo}`}
+                </span>
+              )}
+            </div>
+            <div>
+              <span className="text-xl font-semibold text-gray-600">
+                Account Balance -
+              </span>
+              <span className="text-xl font-semibold">&#8377; 50,000.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="h-[calc(100vh-255px)] w-[800px] flex flex-col gap-2 bg-white shadow-md rounded-b-md px-2 py-2  ">
+        <div className="flex justify-between items-center mb-4 px-4">
+          <span className="text-2xl font-semibold">Transactions</span>
+          <div className="flex justify-center items-center gap-6">
+            <TbFilterSearch className="h-6 w-6 " />
+            <button
+              className="px-2 py-1 bg-green-400 rounded-md flex gap-1 items-center justify-center cursor-pointer"
+              onClick={() => handleShowSendMoneyModal(true)}
+            >
+              <span className="text-lg text-gray-600">Send Money</span>{" "}
+              <RiArrowRightUpLine className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Sankar Nayak</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-green-400 font-semibold">
+                + &#8377; 500
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Ashutosh Biswal</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-red-400 font-semibold">
+                - &#8377; 1000
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Sankar Nayak</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-green-400 font-semibold">
+                + &#8377; 500
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Sankar Nayak</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-green-400 font-semibold">
+                + &#8377; 500
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Sankar Nayak</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-green-400 font-semibold">
+                + &#8377; 500
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-1 rounded-md border-1 border-gray-100 shadow-sm hover:bg-gray-100">
+            <div className="flex flex-col">
+              <div className="text-xl font-semibold">Sankar Nayak</div>
+              <div className="text-sm text-gray-500">Grocery items</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl text-green-400 font-semibold">
+                + &#8377; 500
+              </div>
+              <div className="text-sm text-gray-500">Apr 24, 2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {showSendMoneyModal && <SendMoney handleShowSendMoneyModal={handleShowSendMoneyModal}/>}
+    </div>
+  );
+};
+
+export default Transactions;
