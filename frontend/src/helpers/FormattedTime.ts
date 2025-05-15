@@ -5,8 +5,8 @@ interface RelativeTimeProps {
   className?: string;
 }
 
-export const RelativeTime: React.FC<RelativeTimeProps> = ({ timestamp, className }) => {
-  const formatRelativeTime = (dateString: string | Date) => {
+// export const RelativeTime: React.FC<RelativeTimeProps> = ({ timestamp, className }) => {
+  export const formattedTime = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
@@ -25,7 +25,7 @@ export const RelativeTime: React.FC<RelativeTimeProps> = ({ timestamp, className
     if (diffInHours > 0) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
     if (diffInMinutes > 0) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
     return 'Just now';
-  };
+  // };
 
-  return <span className={className}>{formatRelativeTime(timestamp)}</span>;
+  // return <span className={className}>{formatRelativeTime(timestamp)}</span>;
 };

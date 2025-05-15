@@ -17,6 +17,7 @@ import Home from "./pages/Home";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerProfile from "./pages/admin/CustomerProfile";
 import Transactions from "./pages/transaction/Transactions";
+import Payees from "./pages/Payees";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -37,6 +38,11 @@ function App() {
         {
           path: "/transactions",
           element: <Transactions />,
+        },
+        
+        {
+          path: "/payees",
+          element: <Payees />,
         },
         {
           path: "/admin",

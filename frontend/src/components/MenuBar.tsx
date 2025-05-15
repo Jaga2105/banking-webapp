@@ -10,6 +10,7 @@ import { getUserDetails } from "../api/userAPI";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { changeActiveMenuTab } from "../store/reducers/menuReducer";
+import payee from "../assets/payee.svg";
 // import { div } from "framer-motion/client";
 
 interface MenuBarProps {
@@ -187,6 +188,19 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   >
                     <GrTransaction className="h-6 w-6" />
                     <span> Transactions </span>
+                  </Link>
+                  <Link
+                    to={"/payees"}
+                    className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "payees"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("payees")}
+                  >
+                    {/* <GrTransaction className="h-6 w-6" /> */}
+                    <img src={payee} alt="Payee Image" className="h-6 w-6"/>
+                    <span> Payee </span>
                   </Link>
                   <div
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${

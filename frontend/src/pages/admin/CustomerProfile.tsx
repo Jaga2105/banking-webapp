@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getCustomer } from "../../api/customerAPI";
 import { GridLoader } from "react-spinners";
-import { RelativeTime } from "../../helpers/RelativeTime";
+import { formattedTime } from "../../helpers/FormattedTime";
+// import { RelativeTime } from "../../helpers/RelativeTime";
 
 const CustomerProfile = () => {
   const [customerDetails, setCustomerDetails] = useState<any>(null);
@@ -77,7 +78,7 @@ const CustomerProfile = () => {
             <div className="w-[70%] sm:w-2/3 flex justify-around items-center border-b-1 pb-2 border-violet-600 bg-violet-200 px-1 rounded-sm">
               <span className="text-md font-thin">Created: </span>
               <span className="text-md font-bold">
-                <RelativeTime timestamp={customerDetails.createdAt} />
+                {formattedTime(customerDetails.createdAt)}
               </span>
             </div>
           </div>

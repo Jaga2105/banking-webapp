@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const Transaction = require("./Transaction");
 
 const CustomerSchema = new mongoose.Schema({
   name: {
@@ -51,6 +52,11 @@ const CustomerSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  accountBalance:{
+    type:Number,
+    default:0
+  },
+  transactions:[Transaction.schema],
   createdAt: { type: Date, default: Date.now }, // Add this field
 });
 

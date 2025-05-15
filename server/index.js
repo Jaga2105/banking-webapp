@@ -6,6 +6,7 @@ require('dotenv').config();
 const app = express();
 const authRoute = require('./routes/authRoute')
 const userRoute = require('./routes/userRoute')
+const payeeRoute = require('./routes/payeeRoute')
 const customerRoute = require('./routes/customerRoute')
 
 app.use(cookieParser());
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.use("/auth", authRoute)
 app.use("/user", userRoute)
+app.use("/payee", payeeRoute)
 app.use("/admin", customerRoute)
 
 app.get("/", (req,res)=>{
