@@ -177,7 +177,7 @@ exports.deleteCustomerById = async (req, res) => {
   }
 };
 exports.getCustomerById = async (req, res) => {
-  const { id } = req.body;
+  const  {id}  = req.params;
   try {
     // Fetch all customers
     // const objectId = new ObjectId(id);

@@ -57,7 +57,7 @@ const CustomerList = ({
       {list.length > 0 ? (
         list.map((customer: any) => (
           <div  key={customer._id} className="h-full w-full flex justify-between items-center bg-gray-100 p-2 rounded-md hover:bg-white">
-            <Link to={`/admin/cid/${customer._id}`} className="flex gap-2">
+            <Link to={`/admin/${customer._id}`} className="flex gap-2">
               <img
                 src={customer?.profilePic || profileImg}
                 alt="Profile Picture"

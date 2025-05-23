@@ -39,7 +39,7 @@ function App() {
           path: "/transactions",
           element: <Transactions />,
         },
-        
+
         {
           path: "/payees",
           element: <Payees />,
@@ -49,7 +49,7 @@ function App() {
           element: <AdminDashboard />,
         },
         {
-          path: "/admin/cid/:id",
+          path: "/admin/:id",
           element: <CustomerProfile />,
         },
       ],

@@ -52,12 +52,12 @@ return await fetch(`${url}/admin/deleteCustomer`, {
   .catch((error) => console.error("Error:", error));
 };
 export const getCustomer = async (id:string) => {
-return await fetch(`${url}/admin/getCustomer`, {
-  method: "POST",
+return await fetch(`${url}/admin/getCustomer/${id}`, {
+  method: "GET",
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({id}),
+  // body: JSON.stringify({id}),
 })
   .then((response) =>response.json())
   .then((data) => {

@@ -21,11 +21,12 @@ interface MenuBarProps {
 const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState<any>(null);
-  const activeTab = useSelector((state: any) => state.menu.activeMenuTab);
-  const [aciveMenuTab, setActiveMenuTab] = useState(activeTab);
+  // const activeTab = useSelector((state: any) => state.menu.activeMenuTab);
   const location = useLocation();
   const dispatch = useDispatch();
-  const routeName: any = location.pathname.substring(1, 6);
+  const routeName: any = location.pathname.substring(1);
+  console.log(routeName);
+  const [aciveMenuTab, setActiveMenuTab] = useState(routeName);
   const storedUser: any = localStorage.getItem("user");
   let loggedInUser: any;
   if (storedUser) {
@@ -53,8 +54,8 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
       setActiveMenuTab("");
       handleLogout();
     } else {
-      setActiveMenuTab(menuTab);
       dispatch(changeActiveMenuTab(menuTab));
+      setActiveMenuTab(menuTab);
     }
   };
 
@@ -109,37 +110,40 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
               </motion.div>
             ) : (
               <div>
-                <div className="flex flex-col gap-1 justify-center items-center">
-                  <div className="">
-                    {userDetails?.profilePic ? (
-                      <motion.img
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        src={userDetails?.profilePic}
-                        alt="Profile Image"
-                        className="h-16 w-16 rounded-full shadow-lg mt-6"
-                      />
-                    ) : (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="h-14 w-14 bg-gray-200 rounded-full flex justify-center items-center"
-                      >
-                        <IoPersonSharp className="h-10 w-10 cursor-pointer relative text-gray-600" />
-                      </motion.div>
-                    )}
-                  </div>
-                  <div className="">
-                    {userDetails && (
-                      <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-xl font-semibold text-gray-600 mt-2"
-                      >
-                        {`${userDetails.name}`}
-                      </motion.span>
-                    )}
-                    {/* {userDetails ? (
+                {!userDetails ? (
+                  <MenuBarPlaceholder />
+                ) : (
+                  <div className="flex flex-col gap-1 justify-center items-center">
+                    <div className="">
+                      {userDetails?.profilePic ? (
+                        <motion.img
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          src={userDetails?.profilePic}
+                          alt="Profile Image"
+                          className="h-16 w-16 rounded-full shadow-lg mt-6"
+                        />
+                      ) : (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="h-14 w-14 bg-gray-200 rounded-full flex justify-center items-center"
+                        >
+                          <IoPersonSharp className="h-10 w-10 cursor-pointer relative text-gray-600" />
+                        </motion.div>
+                      )}
+                    </div>
+                    <div className="">
+                      {userDetails && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-xl font-semibold text-gray-600 mt-2"
+                        >
+                          {`${userDetails.name}`}
+                        </motion.span>
+                      )}
+                      {/* {userDetails ? (
                       <motion.span
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -150,19 +154,21 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                         <div className="w-[50px] h-[10px] animate-pulse"></div>
                       )
                     } */}
+                    </div>
+                    <div className="">
+                      {userDetails && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-xl font-semibold text-gray-600 mt-2"
+                        >
+                          {`A/c - ${userDetails.accountNo}`}
+                        </motion.span>
+                      )}
+                    </div>
                   </div>
-                  <div className="">
-                    {userDetails && (
-                      <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-xl font-semibold text-gray-600 mt-2"
-                      >
-                        {`A/c - ${userDetails.accountNo}`}
-                      </motion.span>
-                    )}
-                  </div>
-                </div>
+                )}
+
                 {/* Menu tabs */}
                 <div className="mt-4 flex flex-col">
                   <Link
@@ -199,7 +205,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                     onClick={() => handleactiveMenuTab("payees")}
                   >
                     {/* <GrTransaction className="h-6 w-6" /> */}
-                    <img src={payee} alt="Payee Image" className="h-6 w-6"/>
+                    <img src={payee} alt="Payee Image" className="h-6 w-6" />
                     <span> Payee </span>
                   </Link>
                   <div
@@ -220,6 +226,22 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+};
+
+export const MenuBarPlaceholder = () => {
+  return (
+    <div className="h-[100vh] w-full flex flex-col gap-2 items-center py-4">
+      <div className="h-[64px] w-[64px] animate-pulse bg-gray-200 rounded-full shadow-md"></div>
+      <div className="h-[30px] w-4/5 animate-pulse bg-gray-200 rounded-md shadow-md"></div>
+      <div className="h-[30px] w-4/5 animate-pulse bg-gray-200 rounded-md shadow-md"></div>
+      {/* <div> */}
+      <div className="h-[30px] bg-gray-200 w-full animate-pulse mt-1 mx-4"></div>
+      <div className="h-[30px] bg-gray-200 w-full animate-pulse mt-1 mx-4"></div>
+      <div className="h-[30px] bg-gray-200 w-full animate-pulse mt-1 mx-4"></div>
+      <div className="h-[30px] bg-gray-200 w-full animate-pulse mt-1 mx-4"></div>
+      {/* </div> */}
+    </div>
   );
 };
 

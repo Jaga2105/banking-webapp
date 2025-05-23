@@ -6,19 +6,6 @@ interface APIResponse {
   
 const url = import.meta.env.VITE_API_URL;
 
-// export const getUserDetails = async (id:string):Promise<APIResponse> => {
-//     console.log(id)
-//   return await fetch(`${url}/user/getuser/${id}`, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   })
-//     .then((response) => response.json())
-//     .then((data) => data)
-//     .catch((error) => console.error("Error:", error));
-// };
-
 export const getUserDetails = async (id: string): Promise<APIResponse> => {
     try {
       console.log(id);
@@ -81,7 +68,6 @@ export const getUserDetails = async (id: string): Promise<APIResponse> => {
         body: JSON.stringify(userData),
       });
       const data = await response.json();
-      console.log(data)
       return data; // Or handle errors based on response status
     } catch (error) {
       console.error("Error:", error);

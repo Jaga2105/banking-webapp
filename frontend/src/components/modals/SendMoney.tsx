@@ -1,32 +1,33 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useEffect } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { IoAlert, IoAlertCircleOutline } from "react-icons/io5";
 import { sendMoney } from "../../api/userAPI";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import { getAllPayee } from "../../api/payeeAPI";
 
 interface Props {
   handleShowSendMoneyModal: (flag: boolean) => void;
   userDetails: any;
 }
 interface FormValues {
-  name: string;
-  accountNo: string;
+  // name: string;
+  selectedPayeeAccountNo: string;
   amount: number;
   description: string;
 }
 const initialFormValues: FormValues = {
-  name: "",
-  accountNo: "",
+  // name: "",
+  selectedPayeeAccountNo: "",
   amount: 0,
   description: "",
 };
 interface FormErrors {
-  name: {
-    error: boolean;
-    errorMsg: string;
-  };
-  accountNo: {
+  // name: {
+  //   error: boolean;
+  //   errorMsg: string;
+  // };
+  selectedPayeeAccountNo: {
     error: boolean;
     errorMsg: string;
   };
@@ -44,11 +45,11 @@ interface FormErrors {
   };
 }
 const initialFormErrors: FormErrors = {
-  name: {
-    error: false,
-    errorMsg: "",
-  },
-  accountNo: {
+  // name: {
+  //   error: false,
+  //   errorMsg: "",
+  // },
+  selectedPayeeAccountNo: {
     error: false,
     errorMsg: "",
   },
@@ -71,6 +72,15 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
   const [formErrors, setFormErrors] =
     React.useState<FormErrors>(initialFormErrors);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [payees, setPayees] = React.useState<any>([]);
+
+  const storedUser: any = localStorage.getItem("user");
+  let loggedInUser: any;
+  if (storedUser) {
+    // Parse the string into a JavaScript object
+    loggedInUser = JSON.parse(storedUser);
+  }
+
   const handleClose = () => {
     handleShowSendMoneyModal(false);
   };
@@ -180,15 +190,39 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
     //   validateDescription(e.target.name, e.target.value);
     // }
   };
+  const handleSelectOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // console.log(e.target.name);
+    const {name, value} = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // validateAccountNo("accountNo", formValues.accountNo);
     // validateAmount("amount", formValues.amount);
     // validateDescription("description", formValues.description);
+    // if (!formValues.selectedPayeeAccountNo) {
+    //   setFormErrors({
+    //     ...formErrors,
+    //     selectedPayeeAccountNo: {
+    //       error: true,
+    //       errorMsg: "Please select a payee",
+    //     },
+    //     submitError: {
+    //       error: true,
+    //       errorMsg: "Please fill all fields correctly",
+    //     },
+    //   });
+    //   return;
+    // }
+    console.log(formValues);
+  
     const hasErrors =
-      formValues.accountNo==="" ||
+      formValues.selectedPayeeAccountNo === "" ||
       Number.isNaN(formValues.amount) ||
-      formValues.description==="";
+      formValues.description === "";
 
     if (hasErrors) {
       setFormErrors({
@@ -203,19 +237,20 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
 
     const userData = {
       senderAccountNo: userDetails.accountNo,
-      receiverAccountNo: formValues.accountNo,
+      receiverAccountNo: formValues.selectedPayeeAccountNo,
       amount: formValues.amount,
       description: formValues.description,
       createdAt: Date.now(),
     };
+    console.log(userData)
     setIsLoading(true);
-    const res:any = await sendMoney(userData);
-    console.log(res)
+    const res: any = await sendMoney(userData);
+    console.log(res);
     if (res.success) {
       setIsLoading(false);
       handleClose();
-      toast.success("Transaction Successful")
-    }else{
+      toast.success("Transaction Successful");
+    } else {
       setIsLoading(false);
       setFormErrors({
         ...formErrors,
@@ -226,6 +261,15 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
       });
     }
   };
+  const fetchPayees = async () => {
+    // console.log(loggedInUser?._id);
+    const userResponse: any = await getAllPayee(loggedInUser._id);
+    console.log(userResponse);
+    setPayees(userResponse);
+  };
+  useEffect(() => {
+    fetchPayees();
+  }, []);
   return (
     <div className="absolute inset-0 flex items-center justify-center z-40">
       {/* Close button */}
@@ -252,7 +296,9 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
         </div>
         {formErrors.submitError.error && (
           <p className="text-red-500 font-semibold mx-auto flex gap-1 items-center justify-center">
-            <IoAlertCircleOutline className="h-5 w-5"/>{formErrors.submitError.errorMsg}</p>
+            <IoAlertCircleOutline className="h-5 w-5" />
+            {formErrors.submitError.errorMsg}
+          </p>
         )}
         {/* <div className="flex flex-col gap-1">
           <label htmlFor="name" className="text-lg">
@@ -266,10 +312,10 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
           />
         </div> */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="accountNo" className="text-lg">
-            Account Number
+          <label htmlFor="selectedPayeeAccountNo" className="text-lg">
+            Select Payee
           </label>
-          <input
+          {/* <input
             type="number"
             name="accountNo"
             placeholder="Enter 11-digit account number"
@@ -278,9 +324,27 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
             }`}
             onChange={handleOnchange}
             onBlur={(e) => validateAccountNo(e.target.name, e.target.value)}
-          />
-          {formErrors.accountNo.error && (
-            <p className="text-red-500">{formErrors.accountNo.errorMsg}</p>
+          /> */}
+          <select
+            name="selectedPayeeAccountNo"
+            id="selectedPayeeAccountNo"
+            className="outline-none border-1 border-blue-200 shadow-md rounded-md px-2 py-1"
+            onChange={handleSelectOnChange}
+            // value={formValues.selectedPayeeAccountNo}
+          >
+            <option value="">Select Payee</option>
+            {payees.map((payee: any) => {
+              return (
+                <option key={payee._id} value={payee.accountNo}>
+                  {payee.payeeName} ({payee.accountNo})
+                </option>
+              );
+            })}
+          </select>
+          {formErrors.selectedPayeeAccountNo.error && (
+            <p className="text-red-500">
+              {formErrors.selectedPayeeAccountNo.errorMsg}
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-1">

@@ -25,10 +25,10 @@ const PayeeSchema = new mongoose.Schema({
     // required: true,
     default: "",
   },
-  // active:{
-  //   type: Boolean,
-  //   default: false,
-  // },
+  payerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customer",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -6,10 +6,8 @@ import MenuBar from "./MenuBar";
 const NavBar = () => {
   const [openMenuBar, setOpenMenuBar] = useState(false);
   const handleOpenMenuBar = (status: boolean) => {
-    console.log("called");
     setOpenMenuBar(status);
   };
-  console.log(openMenuBar);
   return (
     <div className="flex justify-between items-center w-full px-8">
       <Link to={"/"} className="text-2xl font-extrabold text-gray-600">

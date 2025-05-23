@@ -193,7 +193,7 @@ const validateAddress = (name:string,value:string) =>{
               User Details
             </div>
             <div className="flex gap-2 items-center">
-              <div className={`w-[60px] flex justify-center items-center rounded text-lg text-gray-700 font-medium px-10 ${userDetails.active ? "bg-green-400" : "bg-red-400"}`}>
+              <div className={`w-[60px] flex justify-center items-center rounded text-lg font-medium px-10 ${userDetails.active ? "bg-green-200 text-green-500" : "bg-red-200 text-red-500"}`}>
                 {userDetails.active ? "Active" : "Inactive"}
               </div>
             </div>
