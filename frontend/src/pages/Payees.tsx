@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { CiCirclePlus, CiMenuKebab } from "react-icons/ci";
-import { getUserDetails } from "../api/userAPI";
-import { formatDate } from "../helpers/FormattedLogics";
+import { useEffect, useState } from "react";
+import { CiCirclePlus } from "react-icons/ci";
 import { GridLoader } from "react-spinners";
 import AddPayee from "../components/modals/AddPayee";
 import { getAllPayee } from "../api/payeeAPI";
-import { formattedTime } from "../helpers/FormattedTime";
 import PayeeDetails from "../components/PayeeDetails";
 import EditPayee from "../components/modals/EditPayee";
 import DeletePayee from "../components/modals/DeletePayee";
 
-type Props = {};
 
-const Payees = (props: Props) => {
+const Payees = () => {
   const [payees, setPayees] = useState<any>([]);
   const [showAddPayeeModal, setShowAddPayeeModal] = useState<boolean>(false);
 

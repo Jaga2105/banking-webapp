@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 import profileImg from "../assets/404.svg";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";

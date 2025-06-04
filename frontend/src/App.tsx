@@ -1,6 +1,5 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 import {
-  Navigate,
   RouterProvider,
   createBrowserRouter,
   useNavigate,
@@ -18,6 +17,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerProfile from "./pages/admin/CustomerProfile";
 import Transactions from "./pages/transaction/Transactions";
 import Payees from "./pages/Payees";
+import BillPayments from "./pages/BillPayments";
+import MobileRecharge from "./pages/MobileRecharge";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -43,6 +44,14 @@ function App() {
         {
           path: "/payees",
           element: <Payees />,
+        },
+        {
+          path: "/billPayments",
+          element: <BillPayments />,
+        },
+        {
+          path: "/mobileRecharge",
+          element: <MobileRecharge />,
         },
         {
           path: "/admin",

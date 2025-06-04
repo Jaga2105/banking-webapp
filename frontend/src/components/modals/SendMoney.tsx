@@ -1,10 +1,16 @@
-import React, { FormEvent, useEffect } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { IoAlert, IoAlertCircleOutline } from "react-icons/io5";
-import { sendMoney } from "../../api/userAPI";
+import {
+  IoAlert,
+  IoAlertCircleOutline,
+  IoInformationCircleOutline,
+} from "react-icons/io5";
+import { getUserDetails, sendMoney } from "../../api/userAPI";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { getAllPayee } from "../../api/payeeAPI";
+import { calculateCreationTime } from "../../helpers/CalculateCreationTime";
+import { calculatePayableAmount } from "../../helpers/CalculatePayableAmount";
 
 interface Props {
   handleShowSendMoneyModal: (flag: boolean) => void;
@@ -13,12 +19,14 @@ interface Props {
 interface FormValues {
   // name: string;
   selectedPayeeAccountNo: string;
+  selectedPayeeBankName?: string;
   amount: number;
   description: string;
 }
 const initialFormValues: FormValues = {
   // name: "",
   selectedPayeeAccountNo: "",
+  selectedPayeeBankName: "",
   amount: 0,
   description: "",
 };
@@ -31,6 +39,10 @@ interface FormErrors {
     error: boolean;
     errorMsg: string;
   };
+  // selectedPayeeBankName?: {
+  //   error: boolean;
+  //   errorMsg: string;
+  // };
   amount: {
     error: boolean;
     errorMsg: string;
@@ -192,33 +204,20 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
   };
   const handleSelectOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     // console.log(e.target.name);
-    const {name, value} = e.target;
+    const { name, value } = e.target;
+    const parsedValue = JSON.parse(value);
+    const { accountNo, bankName } = parsedValue;
+    console.log(accountNo, bankName);
     setFormValues({
       ...formValues,
-      [name]: value,
+      ["selectedPayeeAccountNo"]: accountNo,
+      ["selectedPayeeBankName"]: bankName,
     });
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // validateAccountNo("accountNo", formValues.accountNo);
-    // validateAmount("amount", formValues.amount);
-    // validateDescription("description", formValues.description);
-    // if (!formValues.selectedPayeeAccountNo) {
-    //   setFormErrors({
-    //     ...formErrors,
-    //     selectedPayeeAccountNo: {
-    //       error: true,
-    //       errorMsg: "Please select a payee",
-    //     },
-    //     submitError: {
-    //       error: true,
-    //       errorMsg: "Please fill all fields correctly",
-    //     },
-    //   });
-    //   return;
-    // }
     console.log(formValues);
-  
+
     const hasErrors =
       formValues.selectedPayeeAccountNo === "" ||
       Number.isNaN(formValues.amount) ||
@@ -238,11 +237,17 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
     const userData = {
       senderAccountNo: userDetails.accountNo,
       receiverAccountNo: formValues.selectedPayeeAccountNo,
-      amount: formValues.amount,
+      amount: calculatePayableAmount(
+        formValues.amount,
+        formValues.selectedPayeeBankName,
+        userDetails.bankName
+      ),
+      payerBankName:userDetails.bankName,
+      payeeBankName:formValues.selectedPayeeBankName,
       description: formValues.description,
       createdAt: Date.now(),
     };
-    console.log(userData)
+    console.log(userData);
     setIsLoading(true);
     const res: any = await sendMoney(userData);
     console.log(res);
@@ -262,14 +267,19 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
     }
   };
   const fetchPayees = async () => {
-    // console.log(loggedInUser?._id);
-    const userResponse: any = await getAllPayee(loggedInUser._id);
-    console.log(userResponse);
-    setPayees(userResponse);
+    const payeeResponse: any = await getAllPayee(loggedInUser._id);
+    console.log(payeeResponse);
+    setPayees(
+      payeeResponse.filter(
+        (res: any) => calculateCreationTime(res.createdAt) > 30
+      )
+    );
   };
   useEffect(() => {
     fetchPayees();
   }, []);
+  console.log(userDetails.bankName !== formValues.selectedPayeeBankName);
+  console.log(formValues.selectedPayeeBankName, userDetails.bankName);
   return (
     <div className="absolute inset-0 flex items-center justify-center z-40">
       {/* Close button */}
@@ -288,7 +298,7 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
         onMouseDown={handleClose}
       ></div>
       <form
-        className={`absolute flex flex-col gap-4 min-h-[400px] sm:min-h-[400px] w-[360px] sm:w-[450px] px-6 pt-6 pb-2 bg-white rounded-xl`}
+        className={`absolute flex flex-col gap-4 min-h-[400px] sm:min-h-[400px] w-[360px] sm:w-[450px] px-6 pt-6 pb-6 bg-white rounded-xl`}
         onSubmit={handleSubmit}
       >
         <div className="text-xl text-blue-400 font-semibold mx-auto">
@@ -335,7 +345,14 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
             <option value="">Select Payee</option>
             {payees.map((payee: any) => {
               return (
-                <option key={payee._id} value={payee.accountNo}>
+                <option
+                  key={payee._id}
+                  value={JSON.stringify({
+                    // ✅ Properly stringified
+                    accountNo: payee.accountNo,
+                    bankName: payee.bankName,
+                  })}
+                >
                   {payee.payeeName} ({payee.accountNo})
                 </option>
               );
@@ -363,6 +380,14 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
               validateAmount(e.target.name, e.target.valueAsNumber)
             }
           />
+          {formValues.selectedPayeeBankName !== "" &&
+            formValues.selectedPayeeBankName !== userDetails.bankName && (
+              <p className="text-green-500 font-semibold flex items-center gap-1 text-sm">
+                <IoInformationCircleOutline className="w-5 h-5" />{" "}
+                {/* Optional icon */}
+                Additional ₹10 fee applies for inter-bank transfers
+              </p>
+            )}
           {formErrors.amount.error && (
             <p className="text-red-500">{formErrors.amount.errorMsg}</p>
           )}
@@ -387,7 +412,24 @@ const SendMoney = ({ handleShowSendMoneyModal, userDetails }: Props) => {
             <p className="text-red-500">{formErrors.description.errorMsg}</p>
           )}
         </div>
-        <button className="bg-blue-300 py-1 px-2 mt-4 rounded-sm cursor-pointer">
+        {formValues.selectedPayeeBankName !== "" &&
+          formValues.selectedPayeeBankName !== userDetails.bankName && (
+            <div className="w-full flex justify-between">
+              <span className="font-semibold">Total Amount Payable:</span>
+              <span className="font-bold text-lg">
+                &#8377;{" "}
+                {/* {formValues.selectedPayeeBankName !== userDetails.bankName
+                ? Number(formValues.amount) + 10
+                : formValues.amount} */}
+                {calculatePayableAmount(
+                  formValues.amount,
+                  formValues.selectedPayeeBankName,
+                  userDetails.bankName
+                )}
+              </span>
+            </div>
+          )}
+        <button className="bg-blue-200 text-blue-600 font-bold text-lg py-1 px-2 mt-4 rounded-sm cursor-pointer">
           {!isLoading ? (
             "Send"
           ) : (

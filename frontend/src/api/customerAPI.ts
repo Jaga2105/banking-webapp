@@ -5,6 +5,7 @@ interface UserData {
     phone: string;
     aadhaar: string;
     address: string;
+    bankName:string;
     profilePic: string;
   }
   interface APIResponse {
@@ -77,3 +78,17 @@ return await fetch(`${url}/admin/changeCustomerStatus`, {
   .then((data) => data)
   .catch((error) => console.error("Error:", error));
 };
+
+export const getAdminDetails =async() =>{
+    return await fetch(`${url}/admin/getAdminDetails`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          return response.json()})
+        .then((data) => {
+          return data})
+        .catch((error) => console.error("Error:", error));
+}

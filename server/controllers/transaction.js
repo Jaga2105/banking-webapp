@@ -2,7 +2,14 @@ const { default: mongoose } = require("mongoose");
 const Customer = require("../models/Customer");
 
 exports.transferMoney = async (req, res) => {
-  const { senderAccountNo, receiverAccountNo, amount, description } = req.body;
+  const {
+    senderAccountNo,
+    receiverAccountNo,
+    amount,
+    payerBankName,
+    payeeBankName,
+    description,
+  } = req.body;
   const session = await mongoose.startSession();
   session.startTransaction();
   console.log(receiverAccountNo);
@@ -18,6 +25,7 @@ exports.transferMoney = async (req, res) => {
       accountNo: receiverAccountNo,
     }).session(session);
     console.log(sender);
+    const admin = await Customer.findOne({ isAdmin: true }).session(session);
 
     console.log(receiver);
     if (!sender || !receiver) {
@@ -34,11 +42,18 @@ exports.transferMoney = async (req, res) => {
       });
     }
 
+    let transactedAmount;
+    if (payerBankName !== payeeBankName) {
+      transactedAmount = amount - 10;
+    } else {
+      transactedAmount = amount;
+    }
+
     // 2. Deduct from sender
     sender.accountBalance -= amount;
     sender.transactions.unshift({
       name: receiver.name,
-      amount,
+      amount: transactedAmount,
       type: "debit",
       from: sender._id,
       to: receiver._id,
@@ -47,22 +62,24 @@ exports.transferMoney = async (req, res) => {
     });
 
     // 3. Add to receiver
-    console.log(typeof receiver.accountBalance);
-    console.log(typeof amount);
     receiver.accountBalance += +amount;
     receiver.transactions.unshift({
       name: sender.name,
-      amount,
+      amount: transactedAmount,
       type: "credit",
       from: sender._id,
       to: receiver._id,
       description,
       createdAt: new Date(),
     });
-
+    if (payerBankName !== payeeBankName) {
+      admin.accountBalance += +10;
+      await admin.save({ session });
+    }
     // 4. Save both in transaction
     await sender.save({ session });
     await receiver.save({ session });
+    // await admin.save({ session });
 
     // 5. Commit if everything succeeds
     await session.commitTransaction();

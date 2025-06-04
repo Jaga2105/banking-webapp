@@ -17,8 +17,7 @@ const PayeeSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    maxlength: 11,
-    unique: true,
+    maxlength: 11
   },
   bankLogo: {
     type: String,

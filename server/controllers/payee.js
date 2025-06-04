@@ -10,7 +10,7 @@ exports.addNewPayee = async (req, res) => {
     });
   }
 
-  const existingPayee = await Payee.findOne({ accountNo });
+  const existingPayee = await Payee.findOne({ payerId, accountNo });
   const validPayee = await Customer.findOne({ accountNo });
   console.log(existingPayee);
   if (existingPayee) {

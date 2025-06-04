@@ -56,93 +56,15 @@ const Root: React.FC = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 relative">
+    <div className="min-h-screen bg-gray-50 relative">
       <div className="h-12 flex justify-between items-center w-full shadow-lg fixed bg-white z-10">
         <NavBar />
       </div>
-      <div className="pt-12">
-        <Outlet />
+      <div className="pt-12 min-h-[calc(100vh-3rem)]"> {/* Adjust height */}
+      <Outlet />
       </div>
     </div>
   );
 };
 
 export default Root;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useState } from "react";
-// import { Outlet, useLocation, useNavigate } from "react-router-dom";
-// import NavBar from "../components/NavBar";
-// import { useEffect } from "react";
-// import { getUserDetails } from "../api/userAPI";
-// import { GridLoader } from "react-spinners";
-
-// const Root: React.FC = () => {
-//   const [userDetails, setUserDetails] = useState<any>(null); // Start with null instead of {}
-//   const [loading, setLoading] = useState(true);
-//   const storedUser = localStorage.getItem("user");
-//   const loggedInUser = storedUser ? JSON.parse(storedUser) : null;
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     if (!loggedInUser) {
-//       navigate("/login");
-//       return;
-//     }
-
-//     const fetchData = async () => {
-//       try {
-//         const res:any = await getUserDetails(loggedInUser._id);
-//         setUserDetails(res.others);
-
-//         if (res.others.firstTimeLogin) {
-//           navigate("/reset-password");
-//         }
-//       } catch (error) {
-//         console.error(error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchData();
-//   }, [loggedInUser, navigate]);
-
-//   if (loading) {
-//     return <GridLoader className="text-white mt-28" color="blue" size={8} />;
-//   }
-
-//   return (
-//     <div className="h-screen bg-gray-50 relative">
-//       <div className="h-12 flex justify-between items-center w-full shadow-lg fixed bg-white z-10">
-//         <NavBar />
-//       </div>
-//       <div className="pt-12">
-//         <Outlet />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Root;

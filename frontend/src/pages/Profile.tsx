@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { getUserDetails, updateUser } from "../api/userAPI";
-import { CgProfile } from "react-icons/cg";
 import profileImg from "../assets/profile_img_placeholder.svg";
 import { IoCameraOutline } from "react-icons/io5";
 import imageCompression from "browser-image-compression";

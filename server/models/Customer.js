@@ -2,6 +2,10 @@ const { default: mongoose } = require("mongoose");
 const Transaction = require("./Transaction");
 
 const CustomerSchema = new mongoose.Schema({
+  isAdmin: {
+    type:Boolean,
+    default:false
+  },
   name: {
     type: String,
     required: true,
@@ -11,52 +15,57 @@ const CustomerSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique:true,
+    unique: true,
     trim: true,
     maxlength: 32,
   },
   phone: {
     type: String,
     required: true,
-    trim:true
+    trim: true,
   },
-  aadhaar:{
+  aadhaar: {
+    type: String,
+    // required: true,
+    unique: true,
+    trim: true,
+  },
+  address: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  bankName: {
     type: String,
     required: true,
-    unique:true,
-    trim:true
-  },
-  address:{
-    type: String,
-    required: true,
-    trim:true
+    trim: true,
   },
   profilePic: {
     type: String,
     default: "",
   },
-  accountNo:{
-    type:String,
-    default:""
+  accountNo: {
+    type: String,
+    default: "",
   },
-  active:{
-    type:Boolean,
-    default:true
+  active: {
+    type: Boolean,
+    default: true,
   },
-  password:{
+  password: {
     type: String,
     required: true,
-    trim:true
+    trim: true,
   },
-  firstTimeLogin:{
+  firstTimeLogin: {
     type: Boolean,
-    default: true
+    default: true,
   },
-  accountBalance:{
-    type:Number,
-    default:0
+  accountBalance: {
+    type: Number,
+    default: 5000,
   },
-  transactions:[Transaction.schema],
+  transactions: [Transaction.schema],
   createdAt: { type: Date, default: Date.now }, // Add this field
 });
 
