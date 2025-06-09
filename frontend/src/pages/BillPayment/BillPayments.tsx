@@ -1,5 +1,5 @@
 import React from "react";
-import HeroSectionBillPayents from "../assets/HeroSectionBillPayments.png";
+import HeroSectionBillPayents from "../../assets/HeroSectionBillPayments.png";
 import { TbDeviceMobileCharging } from "react-icons/tb";
 import { FaLightbulb } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -23,14 +23,24 @@ const BillPayments = (props: Props) => {
           </div>
         </div>
         <div className="w-9/10 flex gap-8 flex-wrap mx-auto">
-          <Link to={"/mobileRecharge"} className="w-[200px] flex flex-col items-center bg-violet-100 hover:bg-violet-200 py-2 rounded-md cursor-pointer">
-            <TbDeviceMobileCharging className="text-3xl text-violet-400"/>
-            <span className="text-lg font-semibold font-mono text-violet-400">Mobile Recharge</span>
+          <Link
+            to={"/mobileRecharge"}
+            className="w-[200px] flex flex-col items-center bg-violet-100 hover:bg-violet-200 py-2 rounded-md cursor-pointer"
+          >
+            <TbDeviceMobileCharging className="text-3xl text-violet-400" />
+            <span className="text-lg font-semibold font-mono text-violet-400">
+              Mobile Recharge
+            </span>
           </Link>
-          <div className="w-[200px] flex flex-col items-center bg-violet-100 hover:bg-violet-200 py-2 rounded-md cursor-pointer">
-            <FaLightbulb className="text-3xl text-violet-400"/>
-            <span className="text-lg font-semibold font-mono text-violet-400">Electricity Bill</span>
-          </div>
+          <Link
+            to={"/electricityBill"}
+            className="w-[200px] flex flex-col items-center bg-violet-100 hover:bg-violet-200 py-2 rounded-md cursor-pointer"
+          >
+            <FaLightbulb className="text-3xl text-violet-400" />
+            <span className="text-lg font-semibold font-mono text-violet-400">
+              Electricity Bill
+            </span>
+          </Link>
           {/* <div className="w-[200px] flex flex-col items-center bg-violet-100 py-2 rounded-md">
             <TbDeviceMobileCharging className="text-3xl text-violet-400"/>
             <span className="text-lg font-semibold font-mono text-violet-400">Mobile Recharge</span>

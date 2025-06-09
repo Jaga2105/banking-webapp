@@ -17,8 +17,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerProfile from "./pages/admin/CustomerProfile";
 import Transactions from "./pages/transaction/Transactions";
 import Payees from "./pages/Payees";
-import BillPayments from "./pages/BillPayments";
-import MobileRecharge from "./pages/MobileRecharge";
+import BillPayments from "./pages/BillPayment/BillPayments";
+import MobileRecharge from "./pages/BillPayment/MobileRecharge";
+import ElectricityBill from "./pages/BillPayment/ElectricityBill";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -52,6 +53,10 @@ function App() {
         {
           path: "/mobileRecharge",
           element: <MobileRecharge />,
+        },
+        {
+          path: "/electricityBill",
+          element: <ElectricityBill />,
         },
         {
           path: "/admin",
