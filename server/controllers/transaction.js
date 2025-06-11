@@ -106,3 +106,131 @@ exports.transferMoney = async (req, res) => {
     session.endSession();
   }
 };
+exports.mobileRecharge = async (req, res) => {
+  const { senderAccountNo, phoneNo, amount, description } = req.body;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1. Find sender & receiver by accountNo
+    const sender = await Customer.findOne({
+      accountNo: senderAccountNo,
+    }).session(session);
+
+    if (!sender) {
+      return res.status(404).json({
+        success: false,
+        message: "Account not found",
+      });
+    }
+
+    if (sender.accountBalance < amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient balance",
+      });
+    }
+
+
+    // 2. Deduct from sender
+    sender.accountBalance -= amount;
+    sender.transactions.unshift({
+      phoneNo: phoneNo,
+      amount: amount,
+      type: "debit",
+      description,
+      createdAt: new Date(),
+    });
+
+    // 4. Save both in transaction
+    await sender.save({ session });
+
+    // 5. Commit if everything succeeds
+    await session.commitTransaction();
+    console.log("Mobile Recharge successful!");
+
+    // Send success response
+    return res.status(200).json({
+      success: true,
+      message: "Mobile Recharge successful",
+    });
+  } catch (error) {
+    // 6. Rollback if any error occurs
+    await session.abortTransaction();
+    console.error("Mobile Recharge failed:", error.message);
+
+    // Send error response
+    return res.status(500).json({
+      success: false,
+      message: "Mobile Recharge failed",
+      error: error.message,
+    });
+  } finally {
+    // 7. End the session
+    session.endSession();
+  }
+};
+exports.electricityBillPayment = async (req, res) => {
+  const { senderAccountNo, consumerNo, amount, description } = req.body;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1. Find sender & receiver by accountNo
+    const sender = await Customer.findOne({
+      accountNo: senderAccountNo,
+    }).session(session);
+
+    if (!sender) {
+      return res.status(404).json({
+        success: false,
+        message: "Account not found",
+      });
+    }
+
+    if (sender.accountBalance < amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient balance",
+      });
+    }
+
+
+    // 2. Deduct from sender
+    sender.accountBalance -= amount;
+    sender.transactions.unshift({
+      consumerNo: consumerNo,
+      amount: amount,
+      type: "debit",
+      description,
+      createdAt: new Date(),
+    });
+
+    // 4. Save both in transaction
+    await sender.save({ session });
+
+    // 5. Commit if everything succeeds
+    await session.commitTransaction();
+    console.log("Electricity Bill Payment successful!");
+
+    // Send success response
+    return res.status(200).json({
+      success: true,
+      message: "Electricity Bill Payment successful",
+    });
+  } catch (error) {
+    // 6. Rollback if any error occurs
+    await session.abortTransaction();
+    console.error("Electricity Bill Payment failed:", error.message);
+
+    // Send error response
+    return res.status(500).json({
+      success: false,
+      message: "Electricity Bill Payment successful failed",
+      error: error.message,
+    });
+  } finally {
+    // 7. End the session
+    session.endSession();
+  }
+};

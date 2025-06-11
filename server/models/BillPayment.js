@@ -6,7 +6,12 @@ const BillPayment = new mongoose.Schema({
     trim: true,
     maxlength: 10
   },
-  planAmount: {
+  consumerNo: {
+    type: String,
+    trim: true,
+    maxlength: 12
+  },
+  billAmount: {
     type: String,
   },
   billType:{

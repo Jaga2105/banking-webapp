@@ -20,6 +20,8 @@ import Payees from "./pages/Payees";
 import BillPayments from "./pages/BillPayment/BillPayments";
 import MobileRecharge from "./pages/BillPayment/MobileRecharge";
 import ElectricityBill from "./pages/BillPayment/ElectricityBill";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -59,8 +61,12 @@ function App() {
           element: <ElectricityBill />,
         },
         {
-          path: "/admin",
-          element: <AdminDashboard />,
+          path: "/aboutUs",
+          element: <AboutUs />,
+        },
+        {
+          path: "/contactUs",
+          element: <ContactUs />,
         },
         {
           path: "/admin/:id",

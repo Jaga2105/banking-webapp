@@ -1,8 +1,10 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaRegLightbulb } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import { getUserDetails } from "../../api/userAPI";
+import { electricityBillPayment } from "../../api/transactionAPI";
 
 interface FormValueTypes {
   consumerNo: string;
@@ -33,6 +35,7 @@ const initialFormErrors = {
 
 const ElectricityBill = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState<any>(null);
   const [formValues, setFormValues] =
     useState<FormValueTypes>(initialFormValues);
   const [formErrors, setFormErrors] = useState<FormErrors>(initialFormErrors);
@@ -81,15 +84,11 @@ const ElectricityBill = () => {
     return Math.floor(100 + Math.random() * 900); // Simulating a random bill amount
   };
   const fetchBillAmount = () => {
-    // setIsLoading(true);
-    // Simulate an API call to fetch bill amount
-    // setTimeout(() => {
-      setFormValues({
-        ...formValues,
-        billAmount: "" + calculateBillAmount(), // Example amount
-      });
-      // setIsLoading(false);
-    // }, 2000);
+    const amount = calculateBillAmount();
+    setFormValues((prev) => ({
+      ...prev,
+      ["billAmount"]: String(amount),
+    }));
   };
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -101,30 +100,41 @@ const ElectricityBill = () => {
       } else if (value.length === 11) {
       }
     }
-    setFormValues({
-      ...formValues,
+    setFormValues((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const data = {
-        phoneNo: formValues.consumerNo,
-        planAmount: formValues.billAmount,
-        billType: "mobileRecharge",
-        payerId: loggedInUser._id,
-      };
-      setIsLoading;
-    //   const res: any = await mobileRecharge(data);
-    //   if (!res.error) {
-    //     setIsLoading(false);
-    //     toast.success("Recharge Successful");
-    //     navigate("/billPayments");
-    //   } else {
-    //     toast.error(res.error || "Recharge Failed");
-    //   }
-    //   console.log(res);
+    e.preventDefault();
+    const data = {
+      senderAccountNo: userDetails.accountNo,
+      consumerNo: formValues.consumerNo,
+      amount: formValues.billAmount,
+      description: "Electricity Bill",
+      createdAt: Date.now(),
     };
+    setIsLoading(true);
+    const res: any = await electricityBillPayment(data);
+    if (!res.error) {
+      setIsLoading(false);
+      toast.success("Electricity Bill Payment Successful");
+      navigate("/billPayments");
+    } else {
+      toast.error(res.error || "Electricity Bill Payment Failed");
+    }
+  };
+  console.log(formValues.billAmount);
+  const fetchUserDetails = async (userId: any) => {
+    // console.log(loggedInUser?._id);
+    const userResponse: any = await getUserDetails(userId);
+    console.log(userResponse);
+    setUserDetails(userResponse.others);
+    // setTransactions(userResponse.others.transactions);
+  };
+  useEffect(() => {
+    fetchUserDetails(loggedInUser._id);
+  }, []);
   return (
     <div className="w-full h-full flex justify-center items-center mt-14">
       <form
@@ -152,8 +162,8 @@ const ElectricityBill = () => {
               pattern="[0-9]*" // ensures only numbers are entered
               inputMode="numeric" // shows numeric keyboard on mobile
               className="w-full outline-none border-b-2 border-gray-200 shadow-b-sm focus:border-violet-200 py-1 text-md" // `pl-6` adds left padding for the symbol
-                onChange={handleOnChange}
-              //   value={formValues.phoneNo}
+              onChange={handleOnChange}
+              value={formValues.consumerNo}
             />
           </div>
           {formErrors.consumerNo.error && (
@@ -173,13 +183,13 @@ const ElectricityBill = () => {
               </span>
               <input
                 type="number"
-                name="planAmount"
-                id="planAmount"
+                name="billAmount"
+                id="billAmount"
                 //   placeholder="Enter plan amount"
                 className="w-full outline-none border-b-2 border-gray-200 shadow-b-sm focus:border-violet-200 px-8 py-1 pl-6 cursor-not-allowed" // `pl-6` adds left padding for the symbol
                 //   onChange={handleOnChange}
-                readOnly
-                  value={formValues.billAmount}
+                disabled
+                value={formValues.billAmount}
               />
             </div>
             {/* {formErrors.planAmount.error && (

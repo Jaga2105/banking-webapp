@@ -27,3 +27,30 @@ exports.mobileRecharge = async (req, res) => {
     });
   }
 };
+exports.electricityBill = async (req, res) => {
+  const { consumerNo, billAmount, billType, payerId } = req.body;
+
+  console.log(req.body);
+  if (!consumerNo || !billAmount || !billType || !payerId) {
+    return res.status(400).json({
+      error: "Please provide all details",
+    });
+  }
+  // console.log(phoneNo);
+  try {
+    const newElectricityBill = new BillPayment({
+      consumerNo,
+      billAmount,
+      billType,
+      payerId,
+    });
+    await newElectricityBill.save();
+
+    return res.status(200).json({ message: "Electricity Bill payment done successfully!" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+};

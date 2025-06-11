@@ -1,8 +1,9 @@
 interface Data {
-    phoneNo?: string;
-    planAmount?: string;
-    billType: string;
-    payerId: string;
+    senderAccountNo?: string;
+    amount?: string;
+    description?: string;
+    // billType: string;
+    // payerId: string;
   }
   interface APIResponse {
     error?: string;
@@ -24,7 +25,7 @@ export const mobileRecharge = async (data:Data):Promise<APIResponse> => {
 };
 export const electricityBillPayment = async (data:Data):Promise<APIResponse> => {
   console.log(data)
-  return await fetch(`${url}/billPayment/mobileRecharge`, {
+  return await fetch(`${url}/billPayment/electricityBill`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,7 +1,7 @@
-const { mobileRecharge } = require("../controllers/billPayment");
+const { mobileRecharge, electricityBill } = require("../controllers/billPayment");
 
 const router = require("express").Router();
-console.log("billPaymentRoute.js");
 
 router.post("/mobileRecharge", mobileRecharge);
+router.post("/electricityBill", electricityBill);
 module.exports = router;

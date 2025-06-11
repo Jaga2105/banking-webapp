@@ -5,12 +5,13 @@ import {
   IoAlertCircleOutline,
   IoInformationCircleOutline,
 } from "react-icons/io5";
-import { getUserDetails, sendMoney } from "../../api/userAPI";
+import { getUserDetails } from "../../api/userAPI";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { getAllPayee } from "../../api/payeeAPI";
 import { calculateCreationTime } from "../../helpers/CalculateCreationTime";
 import { calculatePayableAmount } from "../../helpers/CalculatePayableAmount";
+import { sendMoney } from "../../api/transactionAPI";
 
 interface Props {
   handleShowSendMoneyModal: (flag: boolean) => void;

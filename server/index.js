@@ -9,6 +9,7 @@ const userRoute = require('./routes/userRoute')
 const payeeRoute = require('./routes/payeeRoute')
 const customerRoute = require('./routes/customerRoute')
 const billPaymentRoute = require("./routes/billPaymentRoute")
+const transactionRoute = require("./routes/transactionRoute")
 
 app.use(cookieParser());
 app.use(cors());
@@ -22,6 +23,7 @@ app.use("/user", userRoute)
 app.use("/payee", payeeRoute)
 app.use("/billPayment", billPaymentRoute)
 app.use("/admin", customerRoute)
+app.use("/transaction", transactionRoute)
 console.log("index.js")
 
 app.get("/", (req,res)=>{

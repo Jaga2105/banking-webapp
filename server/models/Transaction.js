@@ -5,6 +5,14 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  phoneNo: {
+    type: String,
+    trim: true,
+  },
+  consumerNo: {
+    type: String,
+    trim: true,
+  },
   amount: {
     type: Number,
     required: true,

@@ -74,7 +74,7 @@ const PayeeDetails = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showManagePayeeDropdown]); // Add dependency
+  }, [showManagePayeeDropdown]);
 
   useEffect(() => {
     checkValidPayee();
