@@ -50,6 +50,18 @@ export const getUserDetails = async (id: string): Promise<APIResponse> => {
     .then((data) => data)
     .catch((error) => console.error("Error:", error));
   };
+  export const contact = async (userData:any):Promise<APIResponse> => {
+    return await fetch(`${url}/user/contactUs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => console.error("Error:", error));
+  };
   // export const sendMoney = async (userData:any): Promise<APIResponse> => {
   //   try {
   //     const response = await fetch(`${url}/user/transferMoney`, {

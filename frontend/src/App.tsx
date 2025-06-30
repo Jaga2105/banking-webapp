@@ -22,6 +22,9 @@ import MobileRecharge from "./pages/BillPayment/MobileRecharge";
 import ElectricityBill from "./pages/BillPayment/ElectricityBill";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import Loans from "./pages/Loans";
+import CarLoan from "./pages/loans/CarLoan";
+import HomeLoan from "./pages/loans/HomeLoan";
 
 function App() {
   const user = localStorage.getItem("user");
@@ -67,6 +70,28 @@ function App() {
         {
           path: "/contactUs",
           element: <ContactUs />,
+        },
+        {
+          path: "/loans",
+          element: <Loans />,
+          // children: [
+          //   {
+          //     path: "/loans",
+          //     element: <Loans />,
+          //   },
+          //   {
+          //     path: "/car-loan",
+          //     element: <CarLoan />,
+          //   },
+          // ]},
+        },
+        {
+          path: "/car-loan",
+          element: <CarLoan />,
+        },
+        {
+          path: "/home-loan",
+          element: <HomeLoan />,
         },
         {
           path: "/admin/:id",

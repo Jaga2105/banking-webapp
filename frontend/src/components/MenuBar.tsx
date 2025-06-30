@@ -13,6 +13,9 @@ import { changeActiveMenuTab } from "../store/reducers/menuReducer";
 import payee from "../assets/payee.svg";
 import billPaymentsIcon from "../assets/billPaymentsIcon.png"
 import { getAdminDetails } from "../api/customerAPI";
+import { CiMail } from "react-icons/ci";
+import { RiInfoCardFill } from "react-icons/ri";
+import { fetchRouteName } from "../helpers/fetchRouteName";
 // import { div } from "framer-motion/client";
 
 interface MenuBarProps {
@@ -26,7 +29,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
   // const activeTab = useSelector((state: any) => state.menu.activeMenuTab);
   const location = useLocation();
   const dispatch = useDispatch();
-  const routeName: any = location.pathname.substring(1);
+  const routeName: any = fetchRouteName(location.pathname.substring(1));
   console.log(routeName);
   const [aciveMenuTab, setActiveMenuTab] = useState(routeName);
   const storedUser: any = localStorage.getItem("user");
@@ -223,6 +226,47 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                     {/* <GrTransaction className="h-6 w-6" /> */}
                     <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" />
                     <span> Bill Payments </span>
+                  </Link>
+                  <Link
+                    to={"/aboutUs"}
+                    className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "aboutUs"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("aboutUs")}
+                  >
+                    {/* <GrTransaction className="h-6 w-6" /> */}
+                    {/* <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" /> */}
+                    <RiInfoCardFill className="h-6 w-6" />
+                    <span> About Us </span>
+                  </Link>
+                  <Link
+                    to={"/contactUs"}
+                    className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "contactUs"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("contactUs")}
+                  >
+                    {/* <GrTransaction className="h-6 w-6" /> */}
+                    {/* <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" /> */}
+                    <CiMail className="h-6 w-6" />
+                    <span> Contact Us </span>
+                  </Link>
+                  <Link
+                    to={"/loans"}
+                    className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "loans"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("loans")}
+                  >
+                    {/* <GrTransaction className="h-6 w-6" /> */}
+                    <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" />
+                    <span> Loans </span>
                   </Link>
                   <div
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${

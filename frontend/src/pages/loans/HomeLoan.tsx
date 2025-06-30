@@ -1,0 +1,441 @@
+import React, { useEffect, useState } from "react";
+import CarLoanDetails from "../../components/forms/CarLoanDetails";
+import PersonalDetails from "../../components/forms/PersonalDetails";
+import HomeLoanDetails from "../../components/forms/HomeLoanDetails";
+import { toast } from "react-toastify";
+import { createCarLoan, createHomeLoan, getAllLoanApplicationForms } from "../../api/loanAPI";
+import { GridLoader } from "react-spinners";
+import { Circles } from "react-loader-spinner";
+import { Link } from "react-router-dom";
+import { MdOutlinePendingActions } from "react-icons/md";
+
+interface LoanApplicationForm {
+  author: string;
+  loanType: string;
+  assetType: "home-construction" | "flat-purchase";
+  loanAmount: string;
+  loanPeriod: string;
+  name: string;
+  email: string;
+  bank: string;
+  accountNo: string;
+  incomeSlab: boolean | null;
+  bankStatement: File | null;
+}
+interface Errors {
+  loanAmount?: string;
+  loanPeriod?: string;
+  name?: string;
+  email?: string;
+  bank?: string;
+  accountNo?: string;
+  incomeSlab?: boolean | null;
+  bankStatement?: File | null;
+  loanDetailsErrors?: string;
+  submitError?: string;
+}
+const HomeLoan = () => {
+  const [activeTab, setActiveTab] = useState<
+    "loan-details" | "personal-details"
+  >("loan-details");
+  const [formData, setFormData] = useState<LoanApplicationForm>({
+    author: "",
+    loanType: "home-loan",
+    assetType: "home-construction",
+    loanAmount: "",
+    loanPeriod: "60months",
+    name: "",
+    email: "",
+    bank: "",
+    accountNo: "",
+    incomeSlab: null,
+    bankStatement: null,
+  });
+  const [formErrors, setFormErrors] = useState<Errors>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [loanDetails, setLoanDetails] = useState<any>({});
+  const [isFetching, setIsFetching] = useState(true);
+  const storedUser: any = localStorage.getItem("user");
+  let loggedInUser: any;
+  if (storedUser) {
+    // Parse the string into a JavaScript object
+    loggedInUser = JSON.parse(storedUser);
+  }
+
+  const validateLoanAmount = (value: string) => {
+    const numbersOnly = value.replace(/\D/g, "");
+
+    // Limit to 11 digits
+    const trimmedNumber = numbersOnly.slice(0, 8);
+
+    // Update the form state
+    // onFormChange("accountNo" as keyof LoanApplicationForm, trimmedNumber);
+    setFormData((prev) => ({
+      ...prev,
+      loanAmount: trimmedNumber,
+    }));
+
+    // Clear any existing error
+    setFormErrors((prev) => ({
+      ...prev,
+      loanAmount: undefined,
+    }));
+
+    // Validate length (optional)
+    if (trimmedNumber.length === 0) {
+      setFormErrors((prev) => ({
+        ...prev,
+        loanAmount: "Loan Amount is required",
+      }));
+    }
+  };
+
+  const handleFormChange = (field: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    if (field === "loanAmount") {
+      validateLoanAmount(value);
+    }
+  };
+
+  // Handle file upload separately
+  const handleFileChange = (file: File) => {
+    setFormData((prev) => ({
+      ...prev,
+      bankStatement: file,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newFormData = new FormData(); // Works out of the box!
+
+    if (
+      formData.name.trim() === "" ||
+      formData.email.trim() === "" ||
+      formData.bank.trim() === "" ||
+      formErrors.accountNo?.trim() === "" ||
+      formData.incomeSlab === null ||
+      formData.bankStatement === null
+    ) {
+      setFormErrors((prev) => ({
+        ...prev,
+        submitError: "Please fill in all required fields in Personal Details.",
+      }));
+      return;
+    } else {
+      newFormData.append("loanType", "home-loan");
+      newFormData.append("assetType", formData.assetType);
+      newFormData.append("loanAmount", formData.loanAmount);
+      newFormData.append("loanPeriod", formData.loanPeriod);
+      newFormData.append("name", formData.name);
+      newFormData.append("email", formData.email);
+      newFormData.append("bank", formData.bank);
+      newFormData.append("accountNo", formData.accountNo);
+      newFormData.append("incomeSlab", String(formData.incomeSlab));
+      newFormData.append("bankStatement", formData.bankStatement as Blob);
+      newFormData.append("author", loggedInUser._id);
+      // console.log("Form Submitted")
+      console.log("Form submitted:", newFormData);
+      // Add your submission logic here (API call, etc.)
+      setIsLoading(true);
+      const res: any = await createHomeLoan(newFormData);
+      console.log("Response from API:", res);
+      if (res.error) {
+        console.error("Error submitting form:", res.error);
+        setFormErrors((prev) => ({
+          ...prev,
+          submitError: res.error.message,
+        }));
+        toast.error("Error submitting form: " + res.error.message);
+      } else {
+        console.log(res.message);
+        setFormErrors((prev) => ({
+          ...prev,
+          submitError: undefined,
+        }));
+        toast.success(res.message);
+        // setIsLoading(false);
+        // Reset form data after successful submission
+        setFormData({
+          author: "",
+          loanType: "home-loan",
+          assetType: "home-construction",
+          loanAmount: "",
+          loanPeriod: "60months",
+          name: "",
+          email: "",
+          bank: "",
+          accountNo: "",
+          incomeSlab: null,
+          bankStatement: null,
+        });
+        setActiveTab("loan-details");
+      }
+      setIsLoading(false);
+    }
+  };
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (activeTab === "loan-details") {
+      // Validate loan details before moving to personal details
+      if (formData.loanAmount.trim() === "" || formErrors.loanAmount) {
+        // alert("Please fill in all required fields in Loan Details.");
+        setFormErrors((prev) => ({
+          ...prev,
+          loanDetailsErrors:
+            "Please fill in all required fields in Loan Details.",
+        }));
+        return;
+      }
+      setActiveTab("personal-details");
+    }
+  };
+  const fetchLoanApplicationForms = async () => {
+    const res = await getAllLoanApplicationForms();
+    const homeLoans = res.filter(
+      (loan: LoanApplicationForm) => loan.loanType === "home-loan"
+    );
+    const tempArr: any = homeLoans.filter(
+      (home: LoanApplicationForm) => home.author === loggedInUser._id
+    );
+    setLoanDetails(tempArr[0]);
+    setIsFetching(false);
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeTab, formErrors.submitError]);
+
+  useEffect(() => {
+    fetchLoanApplicationForms();
+  }, []);
+console.log(loanDetails)
+  if (isFetching) {
+    return (
+      <div className="h-[100vh] w-full flex items-center justify-center">
+        <GridLoader color="blue" size={8} />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {loanDetails.loanType==="home-loan" && loanDetails?.author === loggedInUser._id ? (
+        <div className="w-full h-[calc(100vh-100px)] flex flex-col gap-2 justify-center items-center">
+          <MdOutlinePendingActions className="h-20 w-20 text-orange-300" />
+          <div className="text-2xl font-semibold">
+            {" "}
+            You have already applied for Home loan
+          </div>
+          <div className="text-xl font-bold flex items-center justify-center">
+            Status :{" "}
+            <span className="text-orange-400 mx-2">{loanDetails.status}</span>
+          </div>
+          <Link
+            to={"/loans"}
+            className="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-md px-4 py-1 mt-4"
+          >
+            Back to Home
+          </Link>
+        </div>
+      ) : (
+        <form
+          className="w-full flex flex-col  mx-auto my-8 px-12"
+          // onSubmit={handleSubmit}
+        >
+          <div className="w-full flex">
+            <div className="w-1/2">
+              <div
+                className={`font-semibold ${
+                  activeTab === "loan-details"
+                    ? "text-blue-900"
+                    : "text-gray-400"
+                }`}
+              >
+                Loan Details
+              </div>
+              <div
+                className={`w-full h-[5px] ${
+                  activeTab === "loan-details" ? "bg-blue-900" : "bg-gray-200"
+                }`}
+              ></div>
+            </div>
+            <div className="w-1/2">
+              <div
+                className={`font-semibold ${
+                  activeTab === "personal-details"
+                    ? "text-blue-900"
+                    : "text-gray-400"
+                }`}
+              >
+                Personal Details
+              </div>
+              <div
+                className={`w-full h-[5px] ${
+                  activeTab === "personal-details"
+                    ? "bg-blue-900"
+                    : "bg-gray-200"
+                }`}
+              ></div>
+            </div>
+          </div>
+          <div className="flex gap-6">
+            <div className="space-y-12 w-1/3 pt-8 px-8">
+              <div className="text-3xl font-semibold text-blue-900">
+                Finances made delightfully esay!!
+              </div>
+              <div className="text-xl text-gray-500">
+                Getting your dream car just gets easier here....
+              </div>
+            </div>
+            <div className="w-2/3">
+              <div className="mx-auto">
+                {formErrors.loanDetailsErrors && (
+                  <p className="text-red-500 text-sm mt-4">
+                    {formErrors.loanDetailsErrors}
+                  </p>
+                )}
+              </div>
+              {activeTab === "loan-details" ? (
+                <HomeLoanDetails
+                  formData={formData}
+                  onFormChange={handleFormChange}
+                  formErrors={formErrors}
+                />
+              ) : (
+                <PersonalDetails
+                  formData={formData}
+                  onFormChange={handleFormChange}
+                  onFileChange={handleFileChange}
+                  // formErrors={formErrors}
+                />
+              )}
+            </div>
+          </div>
+          <div className="mt-6 flex items-center justify-end gap-x-6">
+            <button
+              type="button"
+              className="text-sm/6 font-semibold text-gray-900 px-3 py-1.5 hover:bg-gray-200 rounded-md cursor-pointer"
+              onClick={() => setActiveTab("loan-details")}
+            >
+              Back
+            </button>
+            <button
+              type={activeTab === "loan-details" ? "button" : "submit"}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                if (activeTab === "loan-details") {
+                  handleNext(e);
+                } else {
+                  handleSubmit(e);
+                }
+              }}
+              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+            >
+              {activeTab === "loan-details" ? "Next" : "Submit"}
+            </button>
+          </div>
+          {isLoading && (
+            <div className="fixed h-[100vh] w-full top-0 left-0 backdrop-contrast-50 bg-[#595959]/40 flex items-center justify-center z-50">
+              <Circles
+                height="80"
+                width="80"
+                color="blue"
+                ariaLabel="circles-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />
+            </div>
+          )}
+        </form>
+      )}
+    </div>
+    // <form
+    //   className="w-full flex flex-col  mx-auto my-8 px-12"
+    //   onSubmit={handleSubmit}
+    // >
+    //   <div className="w-full flex">
+    //     <div className="w-1/2">
+    //       <div
+    //         className={`font-semibold ${
+    //           activeTab === "loan-details" ? "text-blue-900" : "text-gray-400"
+    //         }`}
+    //       >
+    //         Loan Details
+    //       </div>
+    //       <div
+    //         className={`w-full h-[5px] ${
+    //           activeTab === "loan-details" ? "bg-blue-900" : "bg-gray-200"
+    //         }`}
+    //       ></div>
+    //     </div>
+    //     <div className="w-1/2">
+    //       <div
+    //         className={`font-semibold ${
+    //           activeTab === "personal-details"
+    //             ? "text-blue-900"
+    //             : "text-gray-400"
+    //         }`}
+    //       >
+    //         Personal Details
+    //       </div>
+    //       <div
+    //         className={`w-full h-[5px] ${
+    //           activeTab === "personal-details" ? "bg-blue-900" : "bg-gray-200"
+    //         }`}
+    //       ></div>
+    //     </div>
+    //   </div>
+    //   <div className="flex gap-6">
+    //     <div className="space-y-12 w-1/3 pt-8 px-8">
+    //       <div className="text-3xl font-semibold text-blue-900">
+    //         Finances made delightfully esay!!
+    //       </div>
+    //       <div className="text-xl text-gray-500">
+    //         Getting your dream Home just gets easier here....
+    //       </div>
+    //     </div>
+    //     {activeTab === "loan-details" ? (
+    //       <HomeLoanDetails formData={formData} onFormChange={handleFormChange} />
+    //     ) : (
+    //       <PersonalDetails
+    //         formData={formData}
+    //         onFormChange={handleFormChange}
+    //         onFileChange={handleFileChange}
+    //       />
+    //     )}
+    //   </div>
+    //   <div className="mt-6 flex items-center justify-end gap-x-6">
+    //     <button
+    //       type="button"
+    //       className="text-sm/6 font-semibold text-gray-900 px-3 py-1.5 hover:bg-gray-200 rounded-md cursor-pointer"
+    //       onClick={() =>
+    //         setActiveTab(
+    //         //   activeTab === "loan-details" ? "personal-details" : "loan-details"
+    //         "loan-details"
+    //         )
+    //       }
+    //     >
+    //       Back
+    //     </button>
+    //     <button
+    //       type={activeTab === "loan-details" ? "button" : "submit"}
+    //       onClick={() =>
+    //         setActiveTab(
+    //         //   activeTab === "loan-details" ? "personal-details" : "loan-details"
+    //         "personal-details"
+    //         )
+    //       }
+    //       className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+    //     >
+    //       {activeTab === "loan-details" ? "Next" : "Submit"}
+    //     </button>
+    //   </div>
+    // </form>
+  );
+};
+
+export default HomeLoan;
