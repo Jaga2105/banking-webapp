@@ -75,7 +75,6 @@ const AdminDashboard: React.FC = () => {
   };
   const handleOnclickEditCustomer = (id: any) => {
     setShowEditCustomerModal({ ...showEditCustomerModal, id: id });
-    
   };
 
   useEffect(() => {
@@ -102,7 +101,8 @@ const AdminDashboard: React.FC = () => {
     fetchCustomers();
   }, [
     showAddCustomerModal.openAddModal,
-    showDeleteCustomerModal.id,showEditCustomerModal.id,
+    showDeleteCustomerModal.id,
+    showEditCustomerModal.id,
     isCustomerStatusChanged,
   ]);
   return (

@@ -11,11 +11,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { changeActiveMenuTab } from "../store/reducers/menuReducer";
 import payee from "../assets/payee.svg";
-import billPaymentsIcon from "../assets/billPaymentsIcon.png"
+import billPaymentsIcon from "../assets/billPaymentsIcon.png";
 import { getAdminDetails } from "../api/customerAPI";
 import { CiMail } from "react-icons/ci";
 import { RiInfoCardFill } from "react-icons/ri";
 import { fetchRouteName } from "../helpers/fetchRouteName";
+import { SiGoogleforms } from "react-icons/si";
 // import { div } from "framer-motion/client";
 
 interface MenuBarProps {
@@ -74,7 +75,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 flex items-center justify-center z-40"
+          className="absolute inset-0 flex items-center justify-center z-100"
         >
           {/* Close button */}
           <motion.div
@@ -101,7 +102,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
             animate={{ x: 0 }}
             exit={{ x: -400 }}
             transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
-            className="absolute z-10 bg-white left-0 top-0 h-[100vh] w-[300px]"
+            className="absolute z-50 bg-white left-0 top-0 h-[100vh] w-[300px]"
           >
             {routeName === "admin" ? (
               // <motion.div
@@ -224,7 +225,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                     onClick={() => handleactiveMenuTab("billPayments")}
                   >
                     {/* <GrTransaction className="h-6 w-6" /> */}
-                    <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" />
+                    <img
+                      src={billPaymentsIcon}
+                      alt="Bill Payments Image"
+                      className="h-6 w-6"
+                    />
                     <span> Bill Payments </span>
                   </Link>
                   <Link
@@ -265,7 +270,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                     onClick={() => handleactiveMenuTab("loans")}
                   >
                     {/* <GrTransaction className="h-6 w-6" /> */}
-                    <img src={billPaymentsIcon} alt="Bill Payments Image" className="h-6 w-6" />
+                    <img
+                      src={billPaymentsIcon}
+                      alt="Bill Payments Image"
+                      className="h-6 w-6"
+                    />
                     <span> Loans </span>
                   </Link>
                   <div
@@ -300,12 +309,6 @@ export const Admin = ({ handleLogout }: any) => {
     fetchAdminDetails();
   }, []);
   return (
-    // <motion.div
-    //   // whileHover={{ scale: 1.02 }}
-    //   // whileTap={{ scale: 0.98 }}
-    //   // className="flex flex-col gap-2 items-center px-4 py-2 cursor-pointer rounded-md"
-    //   // onClick={handleLogout}
-    // >
     <div>
       <div className="flex flex-col gap-1 justify-center items-center">
         <div className="">
@@ -361,12 +364,23 @@ export const Admin = ({ handleLogout }: any) => {
           )}
         </div>
       </div>
-      <div className="flex gap-2 bg-gray-200 px-4 py-2 items-center mt-8 cursor-pointer hover:bg-gray-300" onClick={handleLogout}>
-        <LuLogOut className="h-4 w-4 cursor-pointer" />
-        <span className="text-lg font-semibold">Logout</span>
+      <div>
+        <Link
+          to={"/loan-applications"}
+          className="flex gap-2 px-4 py-2 items-center mt-8 cursor-pointer hover:bg-gray-300"
+        >
+          <SiGoogleforms className="h-4 w-4 cursor-pointer" />
+          <span className="text-lg font-semibold">Loan Applications</span>
+        </Link>
+        <div
+          className="flex gap-2 px-4 py-2 items-center cursor-pointer hover:bg-gray-300"
+          onClick={handleLogout}
+        >
+          <LuLogOut className="h-4 w-4 cursor-pointer" />
+          <span className="text-lg font-semibold">Logout</span>
+        </div>
       </div>
     </div>
-    // </motion.div>
   );
 };
 

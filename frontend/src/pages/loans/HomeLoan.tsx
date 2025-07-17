@@ -3,11 +3,18 @@ import CarLoanDetails from "../../components/forms/CarLoanDetails";
 import PersonalDetails from "../../components/forms/PersonalDetails";
 import HomeLoanDetails from "../../components/forms/HomeLoanDetails";
 import { toast } from "react-toastify";
-import { createCarLoan, createHomeLoan, getAllLoanApplicationForms } from "../../api/loanAPI";
+import {
+  createCarLoan,
+  createHomeLoan,
+  getAllLoanApplicationForms,
+  removeAdminRequest,
+} from "../../api/loanAPI";
 import { GridLoader } from "react-spinners";
 import { Circles } from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { MdOutlinePendingActions } from "react-icons/md";
+import { SiTicktick } from "react-icons/si";
+import { RxCross2, RxCrossCircled } from "react-icons/rx";
 
 interface LoanApplicationForm {
   author: string;
@@ -205,6 +212,21 @@ const HomeLoan = () => {
     setIsFetching(false);
   };
 
+  const handleRemoveAdminRequest = async () => {
+    const res = await removeAdminRequest(loanDetails._id, false, "");
+    if (!res.error) {
+      toast.success("Admin request removed successfully!");
+      setLoanDetails((prev: any) => ({
+        ...prev,
+        adminRequest: false,
+        adminRequestComment: "",
+      }));
+    } else {
+      toast.error(res.message || "Failed to remove admin request");
+      console.error("Error removing admin request:", res.message);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeTab, formErrors.submitError]);
@@ -212,7 +234,7 @@ const HomeLoan = () => {
   useEffect(() => {
     fetchLoanApplicationForms();
   }, []);
-console.log(loanDetails)
+  console.log(loanDetails);
   if (isFetching) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center">
@@ -223,16 +245,55 @@ console.log(loanDetails)
 
   return (
     <div>
-      {loanDetails.loanType==="home-loan" && loanDetails?.author === loggedInUser._id ? (
+      {loanDetails?.loanType === "home-loan" &&
+      loanDetails?.author === loggedInUser._id ? (
         <div className="w-full h-[calc(100vh-100px)] flex flex-col gap-2 justify-center items-center">
-          <MdOutlinePendingActions className="h-20 w-20 text-orange-300" />
+          {loanDetails.status === "pending" ? (
+            <MdOutlinePendingActions className="h-20 w-20 text-orange-300" />
+          ) : loanDetails.status === "approved" ? (
+            <SiTicktick className="h-20 w-20 text-green-500" />
+          ) : (
+            <RxCrossCircled className="h-20 w-20 text-red-500" />
+          )}
+          {loanDetails.adminRequest && (
+            <div className="w-full flex justify-center items-center absolute z-1 top-14 left-1/2 -translate-x-1/2 text-sm font-semibold bg-red-300 rounded-full px-4 py-0.5">
+              Admin has requested for more information
+              {loanDetails.adminRequestComment && (
+                <span className="text-gray-600">
+                  : {loanDetails.adminRequestComment}
+                </span>
+              )}
+              <RxCross2
+                className="h-4 w-4 absolute right-4 text-white cursor-pointer hover:font-bold"
+                onClick={handleRemoveAdminRequest}
+              />
+            </div>
+          )}
           <div className="text-2xl font-semibold">
             {" "}
-            You have already applied for Home loan
+            {loanDetails.status === "pending"
+              ? "You have already applied for Home loan"
+              : loanDetails.status === "approved"
+              ? "Your application has been approved"
+              : "Your application has been rejected"}
           </div>
           <div className="text-xl font-bold flex items-center justify-center">
-            Status :{" "}
-            <span className="text-orange-400 mx-2">{loanDetails.status}</span>
+            Status :{"   "}
+            <span
+              className={`mt-2 ml-3 ${
+                loanDetails.status === "pending"
+                  ? "text-orange-300"
+                  : loanDetails.status === "approved"
+                  ? "text-green-400"
+                  : "text-red-600"
+              }`}
+            >
+              {loanDetails.status === "pending"
+                ? "Pending"
+                : loanDetails.status === "approved"
+                ? "Approved"
+                : "Rejected"}
+            </span>
           </div>
           <Link
             to={"/loans"}
@@ -353,88 +414,6 @@ console.log(loanDetails)
         </form>
       )}
     </div>
-    // <form
-    //   className="w-full flex flex-col  mx-auto my-8 px-12"
-    //   onSubmit={handleSubmit}
-    // >
-    //   <div className="w-full flex">
-    //     <div className="w-1/2">
-    //       <div
-    //         className={`font-semibold ${
-    //           activeTab === "loan-details" ? "text-blue-900" : "text-gray-400"
-    //         }`}
-    //       >
-    //         Loan Details
-    //       </div>
-    //       <div
-    //         className={`w-full h-[5px] ${
-    //           activeTab === "loan-details" ? "bg-blue-900" : "bg-gray-200"
-    //         }`}
-    //       ></div>
-    //     </div>
-    //     <div className="w-1/2">
-    //       <div
-    //         className={`font-semibold ${
-    //           activeTab === "personal-details"
-    //             ? "text-blue-900"
-    //             : "text-gray-400"
-    //         }`}
-    //       >
-    //         Personal Details
-    //       </div>
-    //       <div
-    //         className={`w-full h-[5px] ${
-    //           activeTab === "personal-details" ? "bg-blue-900" : "bg-gray-200"
-    //         }`}
-    //       ></div>
-    //     </div>
-    //   </div>
-    //   <div className="flex gap-6">
-    //     <div className="space-y-12 w-1/3 pt-8 px-8">
-    //       <div className="text-3xl font-semibold text-blue-900">
-    //         Finances made delightfully esay!!
-    //       </div>
-    //       <div className="text-xl text-gray-500">
-    //         Getting your dream Home just gets easier here....
-    //       </div>
-    //     </div>
-    //     {activeTab === "loan-details" ? (
-    //       <HomeLoanDetails formData={formData} onFormChange={handleFormChange} />
-    //     ) : (
-    //       <PersonalDetails
-    //         formData={formData}
-    //         onFormChange={handleFormChange}
-    //         onFileChange={handleFileChange}
-    //       />
-    //     )}
-    //   </div>
-    //   <div className="mt-6 flex items-center justify-end gap-x-6">
-    //     <button
-    //       type="button"
-    //       className="text-sm/6 font-semibold text-gray-900 px-3 py-1.5 hover:bg-gray-200 rounded-md cursor-pointer"
-    //       onClick={() =>
-    //         setActiveTab(
-    //         //   activeTab === "loan-details" ? "personal-details" : "loan-details"
-    //         "loan-details"
-    //         )
-    //       }
-    //     >
-    //       Back
-    //     </button>
-    //     <button
-    //       type={activeTab === "loan-details" ? "button" : "submit"}
-    //       onClick={() =>
-    //         setActiveTab(
-    //         //   activeTab === "loan-details" ? "personal-details" : "loan-details"
-    //         "personal-details"
-    //         )
-    //       }
-    //       className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
-    //     >
-    //       {activeTab === "loan-details" ? "Next" : "Submit"}
-    //     </button>
-    //   </div>
-    // </form>
   );
 };
 

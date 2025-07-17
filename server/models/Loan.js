@@ -58,6 +58,14 @@ const loanApplicationSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
+  adminRequest:{
+    type: Boolean,
+    default: false,
+  },
+  adminRequestComment:{
+    type: String,
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("LoanApplication", loanApplicationSchema);

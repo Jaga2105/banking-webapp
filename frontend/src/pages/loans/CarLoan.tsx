@@ -1,12 +1,18 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import PersonalDetails from "../../components/forms/PersonalDetails";
 import CarLoanDetails from "../../components/forms/CarLoanDetails";
-import { createCarLoan, getAllLoanApplicationForms } from "../../api/loanAPI";
+import {
+  createCarLoan,
+  getAllLoanApplicationForms,
+  removeAdminRequest,
+} from "../../api/loanAPI";
 import { toast } from "react-toastify";
 import { Circles } from "react-loader-spinner";
 import { MdOutlinePendingActions } from "react-icons/md";
+import { RxCross2, RxCrossCircled } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import { GridLoader } from "react-spinners";
+import { SiTicktick } from "react-icons/si";
 
 interface LoanApplicationForm {
   author: string;
@@ -192,8 +198,8 @@ const CarLoan = () => {
         // setIsLoading(false);
         // Reset form data after successful submission
         setFormData({
-          author:"",
-          loanType:"car-loan",
+          author: "",
+          loanType: "car-loan",
           assetType: "new-car-loan",
           carBrandName: "",
           carModelName: "",
@@ -246,6 +252,21 @@ const CarLoan = () => {
     setLoanDetails(tempArr[0]);
     setIsFetching(false);
   };
+
+  const handleRemoveAdminRequest = async () => {
+    const res = await removeAdminRequest(loanDetails._id, false, "");
+    if (!res.error) {
+      toast.success("Admin request removed successfully!");
+      setLoanDetails((prev: any) => ({
+        ...prev,
+        adminRequest: false,
+        adminRequestComment: "",
+      }));
+    } else {
+      toast.error(res.message || "Failed to remove admin request");
+      console.error("Error removing admin request:", res.message);
+    }
+  };
   // Scroll to top when activeTab changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -257,25 +278,64 @@ const CarLoan = () => {
   if (isFetching) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center">
-        <GridLoader
-          color="blue"
-          size={8}
-        />
+        <GridLoader color="blue" size={8} />
       </div>
     );
   }
+  console.log(loanDetails.status);
   return (
     <div>
-      {loanDetails.loanType==="car-loan" && loanDetails?.author === loggedInUser._id ? (
+      {loanDetails?.loanType === "car-loan" &&
+      loanDetails?.author === loggedInUser._id ? (
         <div className="w-full h-[calc(100vh-100px)] flex flex-col gap-2 justify-center items-center">
-          <MdOutlinePendingActions className="h-20 w-20 text-orange-300" />
+          {loanDetails.status === "pending" ? (
+            <MdOutlinePendingActions className="h-20 w-20 text-orange-300" />
+          ) : loanDetails.status === "approved" ? (
+            <SiTicktick className="h-20 w-20 text-green-500" />
+          ) : (
+            <RxCrossCircled className="h-20 w-20 text-red-500" />
+          )}
+          {/* <div> */}
+          {loanDetails.adminRequest && (
+            <div className="w-full flex justify-center items-center absolute z-1 top-14 left-1/2 -translate-x-1/2 text-sm font-semibold bg-red-300 rounded-full px-4 py-0.5">
+              Admin has requested for more information
+              {loanDetails.adminRequestComment && (
+                <span className="text-gray-600">
+                  : {loanDetails.adminRequestComment}
+                </span>
+              )}
+              <RxCross2
+                className="h-4 w-4 absolute right-4 text-white cursor-pointer hover:font-bold"
+                onClick={handleRemoveAdminRequest}
+              />
+            </div>
+          )}
+          {/* </div> */}
           <div className="text-2xl font-semibold">
             {" "}
-            You have already applied for car loan
+            {loanDetails.status === "pending"
+              ? "You have already applied for Home loan"
+              : loanDetails.status === "approved"
+              ? "Your application has been approved"
+              : "Your application has been rejected"}
           </div>
           <div className="text-xl font-bold flex items-center justify-center">
-            Status :{" "}
-            <span className="text-orange-400 mx-2">{loanDetails.status}</span>
+            <span> Status : </span>
+            <span
+              className={`mt-2 ml-3 ${
+                loanDetails.status === "pending"
+                  ? "text-orange-300"
+                  : loanDetails.status === "approved"
+                  ? "text-green-400"
+                  : "text-red-600"
+              }`}
+            >
+              {loanDetails.status === "pending"
+                ? "Pending"
+                : loanDetails.status === "approved"
+                ? "Approved"
+                : "Rejected"}
+            </span>
           </div>
           <Link
             to={"/loans"}

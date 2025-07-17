@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { createCarLoan,createHomeLoan, getAllLoanApplicationForms } = require("../controllers/loan");
+const { createCarLoan,createHomeLoan, getAllLoanApplicationForms, updateLoanApplicationStatus, getLoanApplicationDetailsById, sendAdminRequest, removeAdminRequest } = require("../controllers/loan");
 const multer = require('multer');
 // const upload = multer({ storage: multer.memoryStorage() }); // For handling Blobs
 const upload = multer({
@@ -12,5 +12,8 @@ const upload = multer({
 router.post("/create-car-loan", upload.single("bankStatement"), createCarLoan);
 router.post("/create-home-loan", upload.single("bankStatement"), createHomeLoan);
 router.get("/get-loan-application-forms", getAllLoanApplicationForms)
-
+router.put("/update-loan-status", updateLoanApplicationStatus)
+router.get("/get-loan-application-form-details/:id", getLoanApplicationDetailsById);
+router.put("/send-admin-request", sendAdminRequest)
+router.put("/remove-admin-request", removeAdminRequest)
 module.exports = router;

@@ -25,104 +25,130 @@ import ContactUs from "./pages/ContactUs";
 import Loans from "./pages/Loans";
 import CarLoan from "./pages/loans/CarLoan";
 import HomeLoan from "./pages/loans/HomeLoan";
+import AdminRoot from "./pages/admin/AdminRoot";
+import LoanApplications from "./pages/admin/LoanApplications";
+import ViewApplication from "./pages/ViewApplication";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/transactions",
+        element: <Transactions />,
+      },
+
+      {
+        path: "/payees",
+        element: <Payees />,
+      },
+      {
+        path: "/billPayments",
+        element: <BillPayments />,
+      },
+      {
+        path: "/mobileRecharge",
+        element: <MobileRecharge />,
+      },
+      {
+        path: "/electricityBill",
+        element: <ElectricityBill />,
+      },
+      {
+        path: "/aboutUs",
+        element: <AboutUs />,
+      },
+      {
+        path: "/contactUs",
+        element: <ContactUs />,
+      },
+      {
+        path: "/loans",
+        element: <Loans />,
+        // children: [
+        //   {
+        //     path: "/loans",
+        //     element: <Loans />,
+        //   },
+        //   {
+        //     path: "/car-loan",
+        //     element: <CarLoan />,
+        //   },
+        // ]},
+      },
+      {
+        path: "/car-loan",
+        element: <CarLoan />,
+      },
+      {
+        path: "/home-loan",
+        element: <HomeLoan />,
+      },
+      // {
+      //   path: "/admin/:id",
+      //   element: <CustomerProfile />,
+      // },
+      // {
+      //   path: "admin",
+      //   element: <AdminRoot />,
+      //   children: [
+      //     {
+      //       path: "",
+      //       element: <AdminDashboard />,
+      //     },
+      //     {
+      //       path: "loan-applications",
+      //       element: <LoanApplications />,
+      //     },
+      //   ],
+      // },
+      {
+        path: "/admin",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "loan-applications",
+        element: <LoanApplications />,
+      },
+      {
+        path: "view-application/:id",
+        element: <ViewApplication />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    // element: user ? <Navigate to={"/forgot-password"} /> : <Login />,
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    // element: user ? <Navigate to={"/"} /> : <Register />,
+    element: <Register />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
 function App() {
-  const user = localStorage.getItem("user");
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      // element: user ? <Home /> : <Navigate to={"/login"}/>,
-      element: <Root />,
-      children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "/profile",
-          element: <Profile />,
-        },
-        {
-          path: "/transactions",
-          element: <Transactions />,
-        },
-
-        {
-          path: "/payees",
-          element: <Payees />,
-        },
-        {
-          path: "/billPayments",
-          element: <BillPayments />,
-        },
-        {
-          path: "/mobileRecharge",
-          element: <MobileRecharge />,
-        },
-        {
-          path: "/electricityBill",
-          element: <ElectricityBill />,
-        },
-        {
-          path: "/aboutUs",
-          element: <AboutUs />,
-        },
-        {
-          path: "/contactUs",
-          element: <ContactUs />,
-        },
-        {
-          path: "/loans",
-          element: <Loans />,
-          // children: [
-          //   {
-          //     path: "/loans",
-          //     element: <Loans />,
-          //   },
-          //   {
-          //     path: "/car-loan",
-          //     element: <CarLoan />,
-          //   },
-          // ]},
-        },
-        {
-          path: "/car-loan",
-          element: <CarLoan />,
-        },
-        {
-          path: "/home-loan",
-          element: <HomeLoan />,
-        },
-        {
-          path: "/admin/:id",
-          element: <CustomerProfile />,
-        },
-      ],
-    },
-    {
-      path: "/login",
-      // element: user ? <Navigate to={"/forgot-password"} /> : <Login />,
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      // element: user ? <Navigate to={"/"} /> : <Register />,
-      element: <Register />,
-    },
-    {
-      path: "/forgot-password",
-      element: <ForgotPassword />,
-    },
-    {
-      path: "/reset-password",
-      element: <ResetPassword />,
-    },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
-
   return <RouterProvider router={router} />;
 }
 
@@ -152,20 +178,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return children;
 };
 
-interface RedirectToHomeProps {
-  children: ReactNode;
-}
+// interface RedirectToHomeProps {
+//   children: ReactNode;
+// }
 
-const RedirectToHome: React.FC<RedirectToHomeProps> = ({ children }) => {
-  const user = localStorage.getItem("user");
-  const navigate = useNavigate();
+// const RedirectToHome: React.FC<RedirectToHomeProps> = ({ children }) => {
+//   const user = localStorage.getItem("user");
+//   const navigate = useNavigate();
 
-  if (user) {
-    navigate("/");
-    return null;
-  }
+//   if (user) {
+//     navigate("/");
+//     return null;
+//   }
 
-  return children;
-};
+//   return children;
+// };
 
 export default App;

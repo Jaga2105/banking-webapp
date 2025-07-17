@@ -74,15 +74,82 @@ export const createHomeLoan = async (
 };
 
 export const getAllLoanApplicationForms = async () => {
-return await fetch(`${url}/loan/get-loan-application-forms`, {
-  method: "GET",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-})
-  .then((response) => {
-    return response.json()})
-  .then((data) => {
-    return data})
-  .catch((error) => console.error("Error:", error));
+  return await fetch(`${url}/loan/get-loan-application-forms`, {
+    method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => console.error("Error:", error));
+};
+
+export const changeLoanApplicationStatus = async (
+  id: string,
+  status: string
+) => {
+  return await fetch(`${url}/loan/update-loan-status`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, status }),
+  })
+    .then((response) => response.json())
+    .then((data) => data)
+    .catch((error) => console.error("Error:", error));
+};
+
+export const getLoanApplicationDEtails = async (id: string) => {
+  console.log(id);
+  return await fetch(`${url}/loan/get-loan-application-form-details/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => console.error("Error:", error));
+};
+
+export const sendAdminRequest = async (
+  id: string,
+  adminRequest: boolean,
+  adminRequestComment: string
+) => {
+  return await fetch(`${url}/loan/send-admin-request`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  body: JSON.stringify({ id, adminRequest, adminRequestComment }),
+  })
+    .then((response) => response.json())
+    .then((data) => data)
+    .catch((error) => console.error("Error:", error));
+};
+
+export const removeAdminRequest = async (
+  id: string,
+  adminRequest: boolean,
+  adminRequestComment: string
+) => {
+  return await fetch(`${url}/loan/remove-admin-request`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  body: JSON.stringify({ id, adminRequest, adminRequestComment }),
+  })
+    .then((response) => response.json())
+    .then((data) => data)
+    .catch((error) => console.error("Error:", error));
 };
