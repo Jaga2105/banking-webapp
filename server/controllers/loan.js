@@ -22,8 +22,6 @@ exports.createCarLoan = async (req, res) => {
     } = req.body;
 
     const bankStatementBlob = req.file; // Assuming single file upload middleware
-    console.log(req.body);
-    console.log(req.file);
 
     // Validate required fields
     if (
@@ -237,7 +235,6 @@ exports.getLoanApplicationDetailsById = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await Loan.findOne({ _id: id });
-    console.log(result);
 
     if (result) {
       res.status(200).json(result);
@@ -251,10 +248,8 @@ exports.getLoanApplicationDetailsById = async (req, res) => {
   }
 };
 exports.sendAdminRequest = async (req, res) => {
-  console.log("Sending admin request...");
   try {
     const { id, adminRequest, adminRequestComment } = req.body;
-    console.log(req.body);
 
     // Validate required fields
     if (!id || !adminRequest || !adminRequestComment) {
@@ -271,7 +266,6 @@ exports.sendAdminRequest = async (req, res) => {
       },
       { new: true } // Returns the updated document (default: false)
     );
-    console.log(result);
     if (result) {
       res.status(200).json({ message: "Request sent successfully" });
     } else {
@@ -290,7 +284,6 @@ exports.sendAdminRequest = async (req, res) => {
 exports.removeAdminRequest = async (req, res) => {
   try {
     const { id, adminRequest, adminRequestComment } = req.body;
-    console.log(req.body);
 
     // Validate required fields
     if (!id || adminRequest || adminRequestComment) {
@@ -307,7 +300,6 @@ exports.removeAdminRequest = async (req, res) => {
       },
       { new: true } // Returns the updated document (default: false)
     );
-    console.log(result);
     if (result) {
       res.status(200).json({ message: "Admin request removed successfully" });
     } else {
@@ -319,6 +311,68 @@ exports.removeAdminRequest = async (req, res) => {
     console.error("Error removing admin request:", error);
     res.status(500).json({
       message: "Error submitting loan application",
+      error: error.message,
+    });
+  }
+};
+exports.uploadRequestedFile = async (req, res) => {
+  try {
+    console.log("Uploading requested file...");
+    const { id, adminRequest, adminRequestComment } = req.body;
+    const requestedFileBlob = req.file; 
+    // Assuming single file upload middleware
+
+    // Validate required fields
+    if (!id || !requestedFileBlob) {
+      console.log("Validation failed");
+      return res
+        .status(400)
+        .json({ message: "All fields are required", error: true });
+    }
+    console.log("Validation passed");
+    // Process the Blob file
+    let requestedFilePath = "";
+    if (requestedFileBlob) {
+      const uploadDir = path.join(__dirname, "../uploads/requestedFiles");
+
+      // Create directory if it doesn't exist
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const uniqueFileName = `${uuidv4()}.${
+        requestedFileBlob.mimetype.split("/")[1] || "pdf"
+      }`;
+      requestedFilePath = path.join(uploadDir, uniqueFileName);
+
+      // Write the buffer to file
+      fs.writeFileSync(requestedFilePath, requestedFileBlob.buffer);
+    }
+    console.log(requestedFilePath);
+
+    const result = await Loan.findByIdAndUpdate(
+      id,
+      {
+        adminRequest: adminRequest || false,
+        adminRequestComment: adminRequestComment || "",
+        requestedFile: `/uploads/requestedFiles/${path.basename(
+        requestedFilePath
+      )}`,
+      },
+      { new: true } // Returns the updated document (default: false)
+    );
+    console.log(result)
+    if (result) {
+      res.status(200).json({ok:true, message: "Requested file uploaded successfully" });
+    } else {
+      res
+        .status(404)
+        .json({ error: true, message: "Failed to upload the requested file" });
+    }
+  } catch (error) {
+    console.error("Error uploading requested file:", error);
+    res.status(500).json({
+      message: "Error uploading requested file",
       error: error.message,
     });
   }

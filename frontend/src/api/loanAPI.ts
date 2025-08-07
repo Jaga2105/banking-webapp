@@ -13,6 +13,12 @@ interface LoanApplicationFormData {
   bankStatement: Blob | File; // Accepts both Blob (from API) or File (from file input)
   author: string;
 }
+interface UploadRequestPayload {
+  file: Blob;
+  id: string;
+  adminRequest: boolean;
+  adminRequestComment: string;
+}
 
 interface APIResponse {
   error?: string;
@@ -36,10 +42,6 @@ export const createCarLoan = async (
 
   return await fetch(`${url}/loan/create-car-loan`, {
     method: "POST",
-    // headers: {
-    //   "Content-Type": "multipart/form-data",
-    // },
-    // body: JSON.stringify(applicationData),
     body: formData,
   })
     .then((response) => response.json())
@@ -130,7 +132,7 @@ export const sendAdminRequest = async (
     headers: {
       "Content-Type": "application/json",
     },
-  body: JSON.stringify({ id, adminRequest, adminRequestComment }),
+    body: JSON.stringify({ id, adminRequest, adminRequestComment }),
   })
     .then((response) => response.json())
     .then((data) => data)
@@ -147,9 +149,37 @@ export const removeAdminRequest = async (
     headers: {
       "Content-Type": "application/json",
     },
-  body: JSON.stringify({ id, adminRequest, adminRequestComment }),
+    body: JSON.stringify({ id, adminRequest, adminRequestComment }),
   })
     .then((response) => response.json())
     .then((data) => data)
+    .catch((error) => console.error("Error:", error));
+};
+
+export const udloadRequestedDocument = async (data: UploadRequestPayload) => {
+  const { file, id, adminRequest, adminRequestComment } = data;
+  console.log(typeof file);
+  const formData = new FormData();
+  formData.append("requestedFile", file); // this must match `upload.single("file")`
+  formData.append("id", id);
+  formData.append("adminRequest", String(adminRequest));
+  formData.append("adminRequestComment", adminRequestComment);
+
+  return await fetch(`${url}/loan/upload-requested-file`, {
+    method: "PUT",
+    // headers: {
+    //   "Content-Type": "application/json",
+    // },
+    // body: JSON.stringify({ id, adminRequest, adminRequestComment, file }),
+    body: formData,
+  })
+    .then((response) => {
+      console.log(response);
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
     .catch((error) => console.error("Error:", error));
 };

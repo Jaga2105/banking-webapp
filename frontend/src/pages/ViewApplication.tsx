@@ -29,10 +29,22 @@ const ViewApplication = () => {
 
     const fileUrl = `http://localhost:5001${applicationDetails.bankStatement}`; // Update base URL as needed
     console.log(fileUrl);
-
     const link = document.createElement("a");
     link.href = fileUrl;
     link.download = "bank-statement.pdf";
+    link.target = "_blank"; // You can set a default name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  const handleDownloadRequestedFile = () => {
+    if (!applicationDetails.requestedFile) return;
+
+    const fileUrl = `http://localhost:5001${applicationDetails.requestedFile}`; // Update base URL as needed
+    console.log(fileUrl);
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = "requested-file.pdf";
     link.target = "_blank"; // You can set a default name
     document.body.appendChild(link);
     link.click();
@@ -185,16 +197,31 @@ const ViewApplication = () => {
                 <span className="text-lg">{applicationDetails.accountNo}</span>
               </div>
             </div>
-            <div className="flex gap-4 items-center px-6 text-gray-600 text-lg">
-              <span className="text-lg font-bold"> Bank Statemnet: </span>
-              {/* <span className="font-bold">
+            <div className="flex gap-6 mb-4">
+              <div className="flex gap-4 items-center px-6 text-gray-600 text-lg w-1/2">
+                <span className="text-lg font-bold"> Bank Statemnet: </span>
+                {/* <span className="font-bold">
                 {applicationDetails.bankStatement}
               </span> */}
-              <FaRegFilePdf
-                className="h-4 w-4 text-gray-700 cursor-pointer hover:text-indigo-500"
-                onClick={handleDownload}
-                title="Download Bank Statement"
-              />
+                <FaRegFilePdf
+                  className="h-4 w-4 text-gray-700 cursor-pointer hover:text-indigo-500"
+                  onClick={handleDownload}
+                  title="Download Bank Statement"
+                />
+              </div>
+              {applicationDetails.requestedFile && (
+                <div className="flex gap-4 items-center px-6 text-gray-600 text-lg w-1/2">
+                  <span className="text-lg font-bold"> Requested Document: </span>
+                  {/* <span className="font-bold">
+                {applicationDetails.bankStatement}
+              </span> */}
+                  <FaRegFilePdf
+                    className="h-4 w-4 text-gray-700 cursor-pointer hover:text-indigo-500"
+                    onClick={handleDownloadRequestedFile}
+                    title="Download Requested File"
+                  />
+                </div>
+              )}
             </div>
           </div>
         ) : (

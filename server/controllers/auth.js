@@ -51,7 +51,6 @@ exports.login = async (req, res) => {
   try {
     // Find user by email
     const user = await Customer.findOne({ email });
-    console.log(user)
 
     // Check if user exists
     if (!user) {

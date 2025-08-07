@@ -66,6 +66,10 @@ const loanApplicationSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  requestedFile: {
+    type: String, // This would store the file path or URL if stored externally
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("LoanApplication", loanApplicationSchema);

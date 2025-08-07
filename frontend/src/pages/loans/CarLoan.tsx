@@ -274,6 +274,7 @@ const CarLoan = () => {
   useEffect(() => {
     fetchLoanApplicationForms();
   }, []);
+  console.log("Form Data:", formData.bankStatement);
 
   if (isFetching) {
     return (
@@ -282,7 +283,6 @@ const CarLoan = () => {
       </div>
     );
   }
-  console.log(loanDetails.status);
   return (
     <div>
       {loanDetails?.loanType === "car-loan" &&
@@ -296,7 +296,7 @@ const CarLoan = () => {
             <RxCrossCircled className="h-20 w-20 text-red-500" />
           )}
           {/* <div> */}
-          {loanDetails.adminRequest && (
+          {/* {loanDetails.adminRequest && (
             <div className="w-full flex justify-center items-center absolute z-1 top-14 left-1/2 -translate-x-1/2 text-sm font-semibold bg-red-300 rounded-full px-4 py-0.5">
               Admin has requested for more information
               {loanDetails.adminRequestComment && (
@@ -309,7 +309,7 @@ const CarLoan = () => {
                 onClick={handleRemoveAdminRequest}
               />
             </div>
-          )}
+          )} */}
           {/* </div> */}
           <div className="text-2xl font-semibold">
             {" "}

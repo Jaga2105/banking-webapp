@@ -212,20 +212,20 @@ const HomeLoan = () => {
     setIsFetching(false);
   };
 
-  const handleRemoveAdminRequest = async () => {
-    const res = await removeAdminRequest(loanDetails._id, false, "");
-    if (!res.error) {
-      toast.success("Admin request removed successfully!");
-      setLoanDetails((prev: any) => ({
-        ...prev,
-        adminRequest: false,
-        adminRequestComment: "",
-      }));
-    } else {
-      toast.error(res.message || "Failed to remove admin request");
-      console.error("Error removing admin request:", res.message);
-    }
-  };
+  // const handleRemoveAdminRequest = async () => {
+  //   const res = await removeAdminRequest(loanDetails._id, false, "");
+  //   if (!res.error) {
+  //     toast.success("Admin request removed successfully!");
+  //     setLoanDetails((prev: any) => ({
+  //       ...prev,
+  //       adminRequest: false,
+  //       adminRequestComment: "",
+  //     }));
+  //   } else {
+  //     toast.error(res.message || "Failed to remove admin request");
+  //     console.error("Error removing admin request:", res.message);
+  //   }
+  // };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -255,7 +255,7 @@ const HomeLoan = () => {
           ) : (
             <RxCrossCircled className="h-20 w-20 text-red-500" />
           )}
-          {loanDetails.adminRequest && (
+          {/* {loanDetails.adminRequest && (
             <div className="w-full flex justify-center items-center absolute z-1 top-14 left-1/2 -translate-x-1/2 text-sm font-semibold bg-red-300 rounded-full px-4 py-0.5">
               Admin has requested for more information
               {loanDetails.adminRequestComment && (
@@ -268,7 +268,7 @@ const HomeLoan = () => {
                 onClick={handleRemoveAdminRequest}
               />
             </div>
-          )}
+          )} */}
           <div className="text-2xl font-semibold">
             {" "}
             {loanDetails.status === "pending"

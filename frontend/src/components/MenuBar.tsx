@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IoPersonSharp } from "react-icons/io5";
+import { IoNotifications, IoPersonSharp } from "react-icons/io5";
 import { LuLogOut } from "react-icons/lu";
 import { RxCross2 } from "react-icons/rx";
 import { IoPerson } from "react-icons/io5";
@@ -17,6 +17,7 @@ import { CiMail } from "react-icons/ci";
 import { RiInfoCardFill } from "react-icons/ri";
 import { fetchRouteName } from "../helpers/fetchRouteName";
 import { SiGoogleforms } from "react-icons/si";
+import { CiCreditCard2 } from "react-icons/ci";
 // import { div } from "framer-motion/client";
 
 interface MenuBarProps {
@@ -276,6 +277,30 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                       className="h-6 w-6"
                     />
                     <span> Loans </span>
+                  </Link>
+                  <Link
+                    to={"/notifications"}
+                    className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "notifications"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("notifications")}
+                  >
+                    <IoNotifications className="h-5 w-5" />
+                    <span> Loans </span>
+                  </Link>
+                  <Link
+                    to={"/cards"}
+                    className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+                      aciveMenuTab === "cards"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "hover:bg-gray-200"
+                    }`}
+                    onClick={() => handleactiveMenuTab("cards")}
+                  >
+                    <CiCreditCard2 className="h-6 w-6"/>
+                    <span> Cards </span>
                   </Link>
                   <div
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${

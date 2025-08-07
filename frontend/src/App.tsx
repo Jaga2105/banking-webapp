@@ -28,6 +28,9 @@ import HomeLoan from "./pages/loans/HomeLoan";
 import AdminRoot from "./pages/admin/AdminRoot";
 import LoanApplications from "./pages/admin/LoanApplications";
 import ViewApplication from "./pages/ViewApplication";
+import Notification from "./pages/loans/Notification";
+import UploadRequestedDocs from "./pages/loans/UploadRequestedDocs";
+import Cards from "./pages/cards/Cards";
 
 const router = createBrowserRouter([
   {
@@ -122,6 +125,18 @@ const router = createBrowserRouter([
       {
         path: "view-application/:id",
         element: <ViewApplication />,
+      },
+      {
+        path: "/notifications",
+        element: <Notification />,
+      },
+      {
+        path: "upload-requested-docs/:id",
+        element: <UploadRequestedDocs />,
+      },
+      {
+        path: "/cards",
+        element: <Cards/>,
       },
     ],
   },
