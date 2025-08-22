@@ -37,7 +37,7 @@ const Root: React.FC = () => {
   useEffect(() => {
     // Route guard logic
     const routeName = location.pathname.substring(1, 6);
-    if (routeName === "admin") {
+    if (location.pathname === "admin") {
       navigate("/admin");
     } else if (!loggedInUser) {
       navigate("/login");

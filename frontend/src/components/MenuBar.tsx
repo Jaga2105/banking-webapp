@@ -31,9 +31,9 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
   // const activeTab = useSelector((state: any) => state.menu.activeMenuTab);
   const location = useLocation();
   const dispatch = useDispatch();
-  const routeName: any = fetchRouteName(location.pathname.substring(1));
+  const routeName: any = fetchRouteName(location.pathname.substring(1, 6));
   console.log(routeName);
-  const [aciveMenuTab, setActiveMenuTab] = useState(routeName);
+  const [activeMenuTab, setActiveMenuTab] = useState(routeName);
   const storedUser: any = localStorage.getItem("user");
   let loggedInUser: any;
   if (storedUser) {
@@ -106,16 +106,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
             className="absolute z-50 bg-white left-0 top-0 h-[100vh] w-[300px]"
           >
             {routeName === "admin" ? (
-              // <motion.div
-              //   whileHover={{ scale: 1.02 }}
-              //   whileTap={{ scale: 0.98 }}
-              //   className="flex gap-2 items-center bg-gray-200 hover:bg-gray-300 px-4 py-2 cursor-pointer rounded-md"
-              //   onClick={handleLogout}
-              // >
-              //   <LuLogOut className="h-4 w-4 cursor-pointer" />
-              //   <span className="text-md font-semibold">Logout</span>
-              // </motion.div>
-              <Admin handleLogout={handleLogout} />
+              <Admin
+                activeMenuTab={activeMenuTab}
+                handleactiveMenuTab={handleactiveMenuTab}
+                handleLogout={handleLogout}
+              />
             ) : (
               <div>
                 {!userDetails ? (
@@ -182,7 +177,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/profile"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "profile"
+                      activeMenuTab === "profile"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -194,7 +189,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/transactions"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "transactions"
+                      activeMenuTab === "transactions"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -206,7 +201,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/payees"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "payees"
+                      activeMenuTab === "payees"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -219,7 +214,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/billPayments"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "billPayments"
+                      activeMenuTab === "billPayments"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -236,7 +231,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/aboutUs"}
                     className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "aboutUs"
+                      activeMenuTab === "aboutUs"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -250,7 +245,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/contactUs"}
                     className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "contactUs"
+                      activeMenuTab === "contactUs"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -264,7 +259,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/loans"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "loans"
+                      activeMenuTab === "loans"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -281,7 +276,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/notifications"}
                     className={`flex sm:hidden gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "notifications"
+                      activeMenuTab === "notifications"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -293,7 +288,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   <Link
                     to={"/cards"}
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "cards"
+                      activeMenuTab === "cards"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -304,7 +299,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
                   </Link>
                   <div
                     className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
-                      aciveMenuTab === "logout"
+                      activeMenuTab === "logout"
                         ? "bg-blue-100 border-l-4 border-blue-500"
                         : "hover:bg-gray-200"
                     }`}
@@ -323,7 +318,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ open, handleOpenMenuBar }) => {
   );
 };
 
-export const Admin = ({ handleLogout }: any) => {
+export const Admin = ({
+  activeMenuTab,
+  handleactiveMenuTab,
+  handleLogout,
+}: any) => {
   const [adminDetails, setAdminDetails] = useState<any>(null);
   const fetchAdminDetails = async () => {
     const res = await getAdminDetails();
@@ -333,6 +332,7 @@ export const Admin = ({ handleLogout }: any) => {
   useEffect(() => {
     fetchAdminDetails();
   }, []);
+  console.log(activeMenuTab)
   return (
     <div>
       <div className="flex flex-col gap-1 justify-center items-center">
@@ -391,11 +391,29 @@ export const Admin = ({ handleLogout }: any) => {
       </div>
       <div>
         <Link
-          to={"/loan-applications"}
-          className="flex gap-2 px-4 py-2 items-center mt-8 cursor-pointer hover:bg-gray-300"
+          to={"/admin/loan-applications"}
+          // className="flex gap-2 px-4 py-2 items-center mt-8 cursor-pointer hover:bg-gray-300"
+          className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+            activeMenuTab === "loan-applications"
+              ? "bg-blue-100 border-l-4 border-blue-500"
+              : "hover:bg-gray-200"
+          }`}
+          onClick={() => handleactiveMenuTab("loan-applications")}
         >
           <SiGoogleforms className="h-4 w-4 cursor-pointer" />
           <span className="text-lg font-semibold">Loan Applications</span>
+        </Link>
+        <Link
+          to={"/admin/cards"}
+          className={`flex gap-2 items-center text-xl pl-4 pr-2 py-2 cursor-pointer ${
+            activeMenuTab === "cards"
+              ? "bg-blue-100 border-l-4 border-blue-500"
+              : "hover:bg-gray-200"
+          }`}
+          onClick={() => handleactiveMenuTab("cards")}
+        >
+          <CiCreditCard2 className="h-6 w-6" />
+          <span> Cards </span>
         </Link>
         <div
           className="flex gap-2 px-4 py-2 items-center cursor-pointer hover:bg-gray-300"

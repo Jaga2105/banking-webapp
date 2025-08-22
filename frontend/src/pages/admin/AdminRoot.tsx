@@ -1,14 +1,14 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import React from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
-type Props = {}
-
-const AdminRoot = (props: Props) => {
+const AdminRoot = () => {
+  const location = useLocation();
+  console.log("Current route:", location.pathname);
   return (
     <div>
-        <Outlet/>
+      <Outlet />
     </div>
-  )
-}
+  );
+};
 
-export default AdminRoot
+export default AdminRoot;

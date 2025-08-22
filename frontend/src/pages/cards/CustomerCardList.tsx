@@ -3,14 +3,16 @@ import { CiCirclePlus } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { FcSimCardChip } from "react-icons/fc";
 import AddCardModal from "../../components/modals/AddCardModal";
-import { deleteCardById, getCardsById } from "../../api/cardsAPI";
+import { deleteCardById, getAllCards, getCardsById } from "../../api/cardsAPI";
 import { toast } from "react-toastify";
+import { getAllCustomers } from "../../api/customerAPI";
+import ApplyCardModal from "../../components/modals/ApplyCardModal";
+// import { PiIdentificationCardDuotone } from "react-icons/pi";
 
-type Props = {};
-
-const Cards = () => {
+const CustomerCardList = () => {
   const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [cards, setCards] = useState<any[]>([]);
+  const [customerList, setCustomerList] = useState<any[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isChangeDetected, setIsChangeDetected] = useState(false);
 
@@ -24,10 +26,12 @@ const Cards = () => {
   const handleOnclickAddCard = () => {
     setShowAddCardModal((prev) => !prev);
   };
+
   const fetchCardList = async () => {
     if (!loggedInUser) return;
     // setIsFetching(true);
     const response: any = await getCardsById(loggedInUser._id);
+    // const response: any = await getAllCards();
     if (!response.error) {
       setIsFetching(false);
       setCards(response);
@@ -38,30 +42,48 @@ const Cards = () => {
   };
   const handleDelete = async (cardId: string) => {
     if (!loggedInUser) return;
-    const res:any = deleteCardById(cardId);
+    const res: any = deleteCardById(cardId);
+    console.log("Delete Response:", res);
+    console.log(isChangeDetected);
     if (!res.error) {
       setIsChangeDetected((prev: boolean) => !prev);
       setCards((prevCards) => prevCards.filter((card) => card._id !== cardId));
-      toast.success(res.message)
-    }else{
-      toast.error("Somrthing went wrong!!")
+      toast.success(res.message);
+    } else {
+      toast.error("Somrthing went wrong!!");
     }
-  }
+  };
+
+  const fetchCustomerList = async () => {
+    const response: any = await getAllCustomers();
+    if (!response.error) {
+      // setIsFetching(false);
+      setCustomerList(response);
+    } else {
+      console.error("Error fetching cards:", response.message);
+      return;
+    }
+  };
 
   useEffect(() => {
     fetchCardList();
   }, [isChangeDetected]);
+  useEffect(() => {
+    fetchCustomerList();
+  }, []);
   console.log("Cards:", cards);
+  console.log(isChangeDetected);
   return (
-    <div className="w-4/5 bg-gray-200 rounded-md min-h-[450px] mx-auto p-4 mt-8 overflow-y-auto">
+    <div className="w-[90%] md:w-1/2 bg-gray-200 rounded-md min-h-[450px] mx-auto p-4 mt-8 overflow-y-auto">
       <div className="flex justify-between">
-        <div className="text-2xl font-semibold">Card List</div>
+        <div className="text-2xl font-semibold">Cards</div>
+        {/* <PiIdentificationCardDuotone /> */}
         <button
           className="text-md text-white font-semibold bg-blue-400 flex gap-1 items-center px-2 py-1 rounded-sm cursor-pointer"
           onClick={handleOnclickAddCard}
         >
-          <CiCirclePlus className="h-6 w-6 " />
-          Add New
+          {/* <CiCirclePlus className="h-6 w-6 " /> */}
+          Apply New Card
         </button>
       </div>
       <div className="">
@@ -74,7 +96,7 @@ const Cards = () => {
                 {cards.map((card, index) => (
                   <li
                     key={index}
-                    className="relative bg-[#2a769c] h-[160px] w-[250px] p-3 rounded-md shadow-sm flex flex-col gap-1 group"
+                    className="relative bg-[#2a769c] h-[160px] w-[300px] p-3 rounded-md shadow-sm flex flex-col gap-1 group"
                   >
                     <MdDelete
                       className="hidden group-hover:block transition-colors absolute right-2 h-6 w-6 text-white font-bold hover:text-gray-300 cursor-pointer"
@@ -83,7 +105,12 @@ const Cards = () => {
                     <div className="text-white font-semibold">
                       {card.bankName || "Unknown Bank"}
                     </div>
-                    <FcSimCardChip className="absolute right-4 top-16 h-10 w-10" />
+                    <div className="absolute right-4 top-16 flex flex-col gap-1">
+                      <FcSimCardChip className=" h-10 w-10" />
+                      <div className="text-white font-semibold">
+                        {card?.cardType}
+                      </div>
+                    </div>
                     <div className="text-white font-semibold">
                       XXXX XXXX XXXX {card.cardNumber.substring(14)}
                     </div>
@@ -121,13 +148,14 @@ const Cards = () => {
         )}
       </div>
       {showAddCardModal && (
-        <AddCardModal
+        <ApplyCardModal
           setShowAddCardModal={setShowAddCardModal}
           setIsChangeDetected={setIsChangeDetected}
+          customerList={customerList}
         />
       )}
     </div>
   );
 };
 
-export default Cards;
+export default CustomerCardList;

@@ -20,6 +20,10 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  cardType: {
+    type: String,
+    required: true,
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",

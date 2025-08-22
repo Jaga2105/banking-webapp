@@ -13,41 +13,15 @@ const NavBar = () => {
   const [notifications, setNotifications] = useState<any>([]);
   const location = useLocation();
   const routeName: any = fetchRouteName(location.pathname.substring(1));
-  console.log("Route Name:", routeName);
 
   const dispatch = useAppDispatch();
   const { loanApplications } = useAppSelector(
     (state: RootState) => state.loanApplications
   );
-  console.log(loanApplications);
-
-  // const storedUser: any = localStorage.getItem("user");
-  // let loggedInUser: any;
-  // if (storedUser) {
-  //   // Parse the string into a JavaScript object
-  //   loggedInUser = JSON.parse(storedUser);
-  // }
 
   const handleOpenMenuBar = (status: boolean) => {
     setOpenMenuBar(status);
   };
-
-  // const fetchLoanApplicationForms = async () => {
-  //   const res = await getAllLoanApplicationForms();
-  //   const homeLoans = res.filter(
-  //     (loan: any) =>
-  //       loan.loanType === "home-loan" || loan.loanType === "car-loan"
-  //   );
-  //   const tempArr: any = homeLoans.filter(
-  //     (loan: any) => loan.author === loggedInUser._id
-  //   );
-  //   setNotifications(tempArr);
-  //   // setIsFetching(false);
-  // };
-  // useEffect(() => {
-  //   fetchLoanApplicationForms();
-  // }, []);
-  console.log("Notifications:", loanApplications);
 
   useEffect(() => {
     dispatch(fetchLoanApplications());

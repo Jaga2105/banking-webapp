@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { addNewCard } from "../../api/cardsAPI";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { updateAnyChangeDetected } from "../../store/reducers/cardReducer";
+import { PulseLoader } from "react-spinners";
 
 const bankList = [
   { id: 1, bankName: "SBI" },
@@ -13,7 +16,11 @@ const bankList = [
   { id: 7, bankName: "Bank of Baroda" },
 ];
 
-const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
+const AddCardModal = ({
+  setShowAddCardModal,
+  setIsChangeDetected,
+  customerList,
+}: any) => {
   const storedUser: any = localStorage.getItem("user");
   let loggedInUser: any;
   if (storedUser) {
@@ -26,10 +33,17 @@ const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
     expiryDate: "",
     cvv: "",
     selectedBank: "",
+    cardType: "debit", // Default to debit
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
+  const [cardAuthor, setCardAuthor] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+  const dispatch = useDispatch();
+  const isChangeDetected = useSelector(
+    (state: any) => state.card.isChangeDetected
+  );
 
   const validateField = (name: string, value: string): string => {
     switch (name) {
@@ -116,22 +130,27 @@ const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
       expiryDate: formData.expiryDate,
       cvv: formData.cvv,
       bankName: formData.selectedBank,
-      author: loggedInUser._id,
+      cardType: formData.cardType,
+      author: cardAuthor,
     };
 
+    setIsFetching((prev)=>!prev);
     const res: any = await addNewCard(data);
     console.log(res);
     if (!res.error) {
       setShowAddCardModal(false);
-      setIsChangeDetected((prev: boolean) => !prev);
+      // setIsChangeDetected((prev: boolean) => !prev);
+      dispatch(updateAnyChangeDetected(!isChangeDetected));
       toast.success("Card added successfully!");
     } else {
       toast.error(res.message || "Failed to add card");
       console.error("Error adding card:", res.message);
     }
-    // setShowAddCardModal(false);
+    setIsFetching((prev)=>!prev)
+    console.log("Form Data:", data);
   };
-
+  console.log(customerList);
+  console.log(cardAuthor);
   return (
     <div className="absolute inset-0 flex items-center justify-center z-30">
       <div
@@ -199,9 +218,46 @@ const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
                   <p className="text-red-500 text-sm">{errors.selectedBank}</p>
                 )}
               </div>
+              {/* Card Type */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="cardType" className="text-md">
+                  Card Type
+                </label>
+                <div className="flex gap-4">
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="radio"
+                      name="cardType"
+                      id="debit"
+                      value={"debit"}
+                      onChange={handleChange}
+                      checked={formData.cardType === "debit"}
+                    />
+                    <label htmlFor="debit" className="text-sm">
+                      Debit
+                    </label>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="radio"
+                      name="cardType"
+                      id="credit"
+                      value={"credit"}
+                      onChange={handleChange}
+                      checked={formData.cardType === "credit"}
+                    />
+                    <label htmlFor="credit" className="text-sm">
+                      Credit
+                    </label>
+                  </div>
+                </div>
+                {/* {errors.selectedBank && (
+                  <p className="text-red-500 text-sm">{errors.selectedBank}</p>
+                )} */}
+              </div>
 
               {/* Card Holder */}
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <label htmlFor="cardHolderName">Card Holder Name</label>
                 <input
                   type="text"
@@ -216,6 +272,64 @@ const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
                   <span className="text-red-500 text-sm">
                     {errors.cardHolderName}
                   </span>
+                )}
+              </div> */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="cardHolderName" className="text-lg">
+                  Card Holder
+                </label>
+                {/* <select
+                  name="cardHolderName"
+                  id="cardHolderName"
+                  className="outline-none border-1 border-blue-200 shadow-md rounded-md px-2 py-1"
+                  onChange={handleChange}
+                  value={formData.cardHolderName}
+                >
+                  <option value="">Select Customer</option>
+                  {customerList.map((customer: any) => {
+                    return (
+                      <option
+                        key={customer._id}
+                        value={customer.name}
+                        onClick={() => setCardAuthor(customer._id)}
+                      >
+                        {customer.name}
+                      </option>
+                    );
+                  })}
+                </select> */}
+                <select
+                  name="cardHolderName"
+                  id="cardHolderName"
+                  className="outline-none border-1 border-blue-200 shadow-md rounded-md px-2 py-1"
+                  onChange={(e) => {
+                    setCardAuthor(e.target.value); // Store _id directly
+                    const selectedCustomer = customerList.find(
+                      (c: any) => c._id === e.target.value
+                    );
+                    if (selectedCustomer) {
+                      handleChange({
+                        target: {
+                          name: "cardHolderName",
+                          value: selectedCustomer.name,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>);
+                    }
+                  }}
+                  value={cardAuthor} // bind to selected _id
+                >
+                  <option value="">Select Customer</option>
+                  {customerList.map((customer: any) => (
+                    <option key={customer._id} value={customer._id}>
+                      {customer.name}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.cardHolderName && (
+                  <p className="text-red-500 text-sm">
+                    {errors.cardHolderName}
+                  </p>
                 )}
               </div>
 
@@ -274,7 +388,8 @@ const AddCardModal = ({ setShowAddCardModal, setIsChangeDetected }: any) => {
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                 >
-                  Add Card
+                  {!isFetching ? "Add Card" : 
+                  <PulseLoader size={6} color="white" />}
                 </button>
               </div>
             </div>

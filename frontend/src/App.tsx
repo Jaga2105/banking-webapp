@@ -30,7 +30,12 @@ import LoanApplications from "./pages/admin/LoanApplications";
 import ViewApplication from "./pages/ViewApplication";
 import Notification from "./pages/loans/Notification";
 import UploadRequestedDocs from "./pages/loans/UploadRequestedDocs";
-import Cards from "./pages/cards/Cards";
+import Cards from "./pages/cards/AdminCardList";
+import Dummy from "./pages/Dummy";
+import AdminCardList from "./pages/cards/AdminCardList";
+import CustomerCardList from "./pages/cards/CustomerCardList";
+import CardList from "./components/constants/CardList";
+import CardApplications from "./components/card/CardApplications";
 
 const router = createBrowserRouter([
   {
@@ -77,16 +82,6 @@ const router = createBrowserRouter([
       {
         path: "/loans",
         element: <Loans />,
-        // children: [
-        //   {
-        //     path: "/loans",
-        //     element: <Loans />,
-        //   },
-        //   {
-        //     path: "/car-loan",
-        //     element: <CarLoan />,
-        //   },
-        // ]},
       },
       {
         path: "/car-loan",
@@ -95,32 +90,6 @@ const router = createBrowserRouter([
       {
         path: "/home-loan",
         element: <HomeLoan />,
-      },
-      // {
-      //   path: "/admin/:id",
-      //   element: <CustomerProfile />,
-      // },
-      // {
-      //   path: "admin",
-      //   element: <AdminRoot />,
-      //   children: [
-      //     {
-      //       path: "",
-      //       element: <AdminDashboard />,
-      //     },
-      //     {
-      //       path: "loan-applications",
-      //       element: <LoanApplications />,
-      //     },
-      //   ],
-      // },
-      {
-        path: "/admin",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "loan-applications",
-        element: <LoanApplications />,
       },
       {
         path: "view-application/:id",
@@ -136,7 +105,34 @@ const router = createBrowserRouter([
       },
       {
         path: "/cards",
-        element: <Cards/>,
+        element: <CustomerCardList />,
+      },
+      {
+        path: "/admin",
+        element: <AdminRoot />,
+        children: [
+          {
+            // path: "",
+            index: true,
+            element: <AdminDashboard />,
+          },
+          {
+            path: ":id",
+            element: <CustomerProfile />,
+          },
+          {
+            path: "loan-applications",
+            element: <LoanApplications />,
+          },
+          {
+            path: "cards",
+            element: <AdminCardList />,
+            children: [
+              { index: true, element: <CardList /> },
+              { path: "card-applications", element: <CardApplications /> },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -166,47 +162,4 @@ const router = createBrowserRouter([
 function App() {
   return <RouterProvider router={router} />;
 }
-
-interface ProtectedRouteProps {
-  children: ReactNode;
-  redirectTo: string;
-}
-
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  redirectTo,
-}) => {
-  const user = localStorage.getItem("user");
-  const navigate = useNavigate();
-
-  if (!user) {
-    if (redirectTo) {
-      navigate(redirectTo);
-    } else {
-      // Handle the case where redirectTo is not specified
-      console.error("ProtectedRoute: redirectTo prop is not specified");
-    }
-
-    // Render nothing or a loading/error component if you prefer
-    return null;
-  }
-  return children;
-};
-
-// interface RedirectToHomeProps {
-//   children: ReactNode;
-// }
-
-// const RedirectToHome: React.FC<RedirectToHomeProps> = ({ children }) => {
-//   const user = localStorage.getItem("user");
-//   const navigate = useNavigate();
-
-//   if (user) {
-//     navigate("/");
-//     return null;
-//   }
-
-//   return children;
-// };
-
 export default App;
