@@ -36,6 +36,7 @@ import AdminCardList from "./pages/cards/AdminCardList";
 import CustomerCardList from "./pages/cards/CustomerCardList";
 import CardList from "./components/constants/CardList";
 import CardApplications from "./components/card/CardApplications";
+import FindNearbyATMs from "./pages/cards/FindNearbyATMs";
 
 const router = createBrowserRouter([
   {
@@ -106,7 +107,9 @@ const router = createBrowserRouter([
       {
         path: "/cards",
         element: <CustomerCardList />,
+        // children: [],
       },
+      { path: "/find-atms", element: <FindNearbyATMs /> },
       {
         path: "/admin",
         element: <AdminRoot />,

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
+import { ImLocation2 } from "react-icons/im";
 import { FcSimCardChip } from "react-icons/fc";
 import AddCardModal from "../../components/modals/AddCardModal";
 import { deleteCardById, getAllCards, getCardsById } from "../../api/cardsAPI";
 import { toast } from "react-toastify";
 import { getAllCustomers } from "../../api/customerAPI";
 import ApplyCardModal from "../../components/modals/ApplyCardModal";
+import { Link } from "react-router-dom";
 // import { PiIdentificationCardDuotone } from "react-icons/pi";
 
 const CustomerCardList = () => {
@@ -78,13 +80,25 @@ const CustomerCardList = () => {
       <div className="flex justify-between">
         <div className="text-2xl font-semibold">Cards</div>
         {/* <PiIdentificationCardDuotone /> */}
-        <button
-          className="text-md text-white font-semibold bg-blue-400 flex gap-1 items-center px-2 py-1 rounded-sm cursor-pointer"
-          onClick={handleOnclickAddCard}
-        >
-          {/* <CiCirclePlus className="h-6 w-6 " /> */}
-          Apply New Card
-        </button>
+        {/* <ImLocation2 className="h-8 w-8 text-blue-400" /> */}
+        <div className="flex gap-8">
+          <div className="group relative">
+            <Link to={"/find-atms"}>
+              <ImLocation2 className="h-6 w-6 cursor-pointer" />
+            </Link>
+            <div className="hidden group-hover:block absolute top-4 left-6 p-1 shadow-md rounded text-sm text-white bg-black w-[100px]">
+              Locate Nearby ATMs
+            </div>
+          </div>
+
+          <button
+            className="text-md text-white font-semibold bg-blue-400 flex gap-1 items-center px-2 py-1 rounded-sm cursor-pointer"
+            onClick={handleOnclickAddCard}
+          >
+            {/* <CiCirclePlus className="h-6 w-6 " /> */}
+            Apply New Card
+          </button>
+        </div>
       </div>
       <div className="">
         {isFetching ? (
