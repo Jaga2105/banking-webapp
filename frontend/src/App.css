@@ -1,10 +1,29 @@
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Hide the arrows in Firefox */
 input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
+}
+/* Thin scrollbar for Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px; /* make it thin */
+}
+
+/* .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;  */
+/* } */
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9ca3af; /* gray-400 */
+  border-radius: 9999px; /* fully rounded */
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: #9ca3af transparent;
 }

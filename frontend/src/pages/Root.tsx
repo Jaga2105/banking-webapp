@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { getUserDetails } from "../api/userAPI";
 import { GridLoader } from "react-spinners";
+import { SiChatbot } from "react-icons/si";
+import { fetchRouteName } from "../helpers/fetchRouteName";
 
 const Root: React.FC = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const routeName: any = fetchRouteName(location.pathname);
+  const desiredPath = routeName.substring(routeName.length - 5);
 
   // Get user from localStorage once on initial render
   const loggedInUser = React.useMemo(() => {
@@ -42,7 +47,7 @@ const Root: React.FC = () => {
     } else if (!loggedInUser) {
       navigate("/login");
     } else {
-      setLoading(true)
+      setLoading(true);
       fetchUserDetails();
     }
   }, [location.pathname, loggedInUser, fetchUserDetails]);
@@ -60,8 +65,18 @@ const Root: React.FC = () => {
       <div className="h-12 flex justify-between items-center w-full shadow-lg fixed bg-white z-10">
         <NavBar />
       </div>
-      <div className="pt-12 min-h-[calc(100vh-3rem)]"> {/* Adjust height */}
-      <Outlet />
+      <div className="relative pt-12 min-h-[calc(100vh-3rem)]">
+        {" "}
+        {/* Adjust height */}
+        <Outlet />
+        {desiredPath !== "chats" && (
+          <Link
+            to={"/chats"}
+            className="absolute z-10 bottom-4 right-8 bg-violet-400 text-white p-4 rounded-full shadow-lg cursor-pointer hover:bg-violet-500 transition"
+          >
+            <SiChatbot />
+          </Link>
+        )}
       </div>
     </div>
   );
