@@ -5,7 +5,9 @@ import { getUserDetails } from "../api/userAPI";
 import { GridLoader } from "react-spinners";
 import { SiChatbot } from "react-icons/si";
 import { fetchRouteName } from "../helpers/fetchRouteName";
+import { io, Socket } from "socket.io-client";
 
+let socket: Socket;
 const Root: React.FC = () => {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -14,6 +16,30 @@ const Root: React.FC = () => {
 
   const routeName: any = fetchRouteName(location.pathname);
   const desiredPath = routeName.substring(routeName.length - 5);
+
+  // Socket connection setup (commented out for now)
+  socket = io("http://localhost:5001");
+  useEffect(() => {
+    //  {
+    //   transports: ["websocket"],
+    //   reconnection: false, // disable auto reconnection loop for debugging
+    // });
+
+    socket.on("connect", () => {
+      console.log("Connected:", socket.id);
+    });
+
+    return () => {
+      socket.disconnect(); // cleanup on unmount
+    };
+  }, []);
+  // const socket = io("http://localhost:5001");
+  useEffect(() => {
+    socket.emit("send-message-all", { text: "Hii from John" });
+    socket.on("send-message-by-server", (data) => {
+      console.log(data.text);
+    });
+  }, []);
 
   // Get user from localStorage once on initial render
   const loggedInUser = React.useMemo(() => {
